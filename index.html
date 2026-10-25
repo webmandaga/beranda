@@ -186,6 +186,26 @@
     .article-body p, .article-body div { margin-bottom: 14px; }
     .article-body img { max-width: 100%; height: auto !important; border-radius: 14px; margin: 10px auto; display: block; }
     .article-body a { color: var(--accent-light) !important; text-decoration: underline; }
+    .share-bar { margin-top: 32px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.15); }
+    .article-box { position: relative; z-index: 10; }
+    .custom-footer { position: relative; z-index: 1; }
+    .share-wrap { position: relative; display: inline-block; }
+    .share-toggle { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.14); color: #ffffff; border: 1px solid rgba(255,255,255,0.35); padding: 11px 22px; border-radius: 50px; font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: 0.3s; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .share-toggle:hover, .share-wrap.open .share-toggle { background: var(--accent); border-color: var(--accent); box-shadow: 0 6px 20px rgba(13,181,164,0.4); }
+    .share-caret { font-size: 0.65rem; transition: transform 0.3s; }
+    .share-wrap.open .share-caret { transform: rotate(180deg); }
+    .share-menu { position: absolute; left: 0; top: calc(100% + 10px); width: 250px; background: #ffffff; border-radius: 18px; padding: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transform: translateY(8px); transition: all 0.25s ease; z-index: 50; }
+    .share-wrap.open .share-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .share-wrap.up .share-menu { top: auto; bottom: calc(100% + 10px); transform: translateY(-8px); }
+    .share-wrap.up.open .share-menu { transform: translateY(0); }
+    .share-item { display: flex; align-items: center; gap: 14px; width: 100%; padding: 9px 12px; border: none; background: transparent; border-radius: 12px; color: #1A103D !important; font-family: inherit; font-size: 0.92rem; font-weight: 500; text-decoration: none !important; cursor: pointer; text-align: left; transition: 0.2s; }
+    .share-item:hover { background: #F4F1FE; }
+    .si-ico { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: #ffffff; font-size: 1rem; flex-shrink: 0; }
+    .share-sep { height: 1px; background: #eee; margin: 6px 8px; }
+    .sh-wa { background: #25D366; } .sh-fb { background: #1877F2; } .sh-x { background: #000000; } .sh-tg { background: #229ED9; }
+    .sh-ig { background: linear-gradient(45deg, #f09433, #dc2743 55%, #bc1888); } .sh-tt { background: #111111; } .sh-copy { background: var(--accent); } .sh-native { background: #6b5aa8; }
+    .toast { position: fixed; left: 50%; bottom: 30px; transform: translate(-50%, 20px); background: #1A103D; color: #ffffff; padding: 12px 22px; border-radius: 50px; font-size: 0.9rem; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9999999; box-shadow: 0 10px 30px rgba(0,0,0,0.4); max-width: 90%; text-align: center; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .article-body iframe { max-width: 100%; border: none; border-radius: 14px; }
     .article-body iframe.embed-frame { display: block; width: 100%; height: 560px; background: #ffffff; margin: 16px 0; }
     .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"] { height: auto; aspect-ratio: 16 / 9; }
@@ -368,6 +388,25 @@
             <span class="article-date" id="article-date"></span>
             <h2 class="article-title" id="article-title"></h2>
             <div class="article-body" id="article-body"></div>
+            <div class="share-bar" id="share-bar" style="display:none;">
+                <div class="share-wrap" id="share-wrap">
+                    <button type="button" class="share-toggle" id="share-toggle" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-share-nodes"></i> Bagikan <i class="fas fa-chevron-down share-caret"></i>
+                    </button>
+                    <div class="share-menu" id="share-menu" role="menu">
+                        <a id="sh-wa" class="share-item" role="menuitem" target="_blank" rel="noopener"><span class="si-ico sh-wa"><i class="fab fa-whatsapp"></i></span>WhatsApp</a>
+                        <a id="sh-fb" class="share-item" role="menuitem" target="_blank" rel="noopener"><span class="si-ico sh-fb"><i class="fab fa-facebook-f"></i></span>Facebook</a>
+                        <a id="sh-x" class="share-item" role="menuitem" target="_blank" rel="noopener"><span class="si-ico sh-x"><i class="fab fa-x-twitter"></i></span>X (Twitter)</a>
+                        <a id="sh-tg" class="share-item" role="menuitem" target="_blank" rel="noopener"><span class="si-ico sh-tg"><i class="fab fa-telegram"></i></span>Telegram</a>
+                        <button type="button" id="sh-ig" class="share-item" role="menuitem"><span class="si-ico sh-ig"><i class="fab fa-instagram"></i></span>Instagram</button>
+                        <button type="button" id="sh-tt" class="share-item" role="menuitem"><span class="si-ico sh-tt"><i class="fab fa-tiktok"></i></span>TikTok</button>
+                        <div class="share-sep"></div>
+                        <button type="button" id="sh-copy" class="share-item" role="menuitem"><span class="si-ico sh-copy"><i class="fas fa-link"></i></span>Salin link</button>
+                        <button type="button" id="sh-native" class="share-item" role="menuitem" style="display:none;"><span class="si-ico sh-native"><i class="fas fa-ellipsis"></i></span>Lainnya...</button>
+                    </div>
+                </div>
+            </div>
+            <div class="toast" id="toast"></div>
         </div>
     </div>
 </section>
@@ -377,7 +416,7 @@
         <div class="footer-box">
             <h4>Kontak Kami</h4>
             <div class="contact-item">
-                <i class="fas fa-map-marker-alt"></i> Jl. Pilangkidul, Desa Gubug, Kec. Gubug, Kab. Grobogan, Jawa Tengah 58164
+                <i class="fas fa-map-marker-alt"></i> Jl. Pilang Kidul Gubug, Kec. Gubug, Kab. Grobogan
             </div>
             <div class="contact-item">
                 <i class="fas fa-phone-alt"></i> <a href="tel:02925150494">02925150494</a>
@@ -394,7 +433,7 @@
         </div>
         <div class="footer-box">
             <h4>Lokasi Madrasah</h4>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.6243255478007!2d110.65496373739656!3d-7.0533530929782975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e709684338de15d%3A0x53dc4b46f2bb2819!2sMAN%202%20GROBOGAN!5e0!3m2!1sid!2sid!4v1792916231609!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.088829037303!2d110.9168!3d-7.1168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMDcnMDAuNSJTIDExMMKwNTUnMDAuNSJF!5e0!3m2!1sid!2sid!4v1620000000000!5m2!1sid!2sid" allowfullscreen="" loading="lazy" title="Peta lokasi MAN 2 Grobogan"></iframe>
         </div>
     </div>
     <div class="copyright">
@@ -590,6 +629,7 @@
             document.getElementById('article-title').textContent = e.title.$t;
             document.getElementById('article-date').textContent = new Date(e.published.$t).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('article-body').innerHTML = cleanHTML((e.content && e.content.$t) || '');
+            updateShare(e.title.$t);
         } catch (err) {
             document.getElementById('article-body').textContent = 'Berita tidak dapat dimuat.';
         }
@@ -600,6 +640,7 @@
         document.getElementById('hero-section').style.display = 'none';
         document.getElementById('berita-section').style.display = 'none';
         document.getElementById('article-view').style.display = 'block';
+        document.getElementById('share-bar').style.display = 'none';
         document.getElementById('article-title').textContent = 'Memuat berita...';
         document.getElementById('article-date').textContent = '';
         document.getElementById('article-body').innerHTML = '';
@@ -609,6 +650,74 @@
         s.onerror = function () { document.getElementById('article-title').textContent = 'Berita tidak dapat dimuat.'; };
         document.body.appendChild(s);
     }
+
+    // ===== Tombol bagikan =====
+    var shareTitle = '';
+    function showToast(msg) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () { t.classList.remove('show'); }, 2600);
+    }
+    function copyLink(msg) {
+        var url = location.href;
+        function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            ta.remove();
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).catch(fallback);
+        } else { fallback(); }
+        showToast(msg || 'Link disalin');
+    }
+    function updateShare(title) {
+        shareTitle = title || document.title;
+        var url = encodeURIComponent(location.href);
+        var text = encodeURIComponent(shareTitle);
+        document.getElementById('sh-wa').href = 'https://wa.me/?text=' + text + '%0A' + url;
+        document.getElementById('sh-fb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
+        document.getElementById('sh-x').href = 'https://twitter.com/intent/tweet?text=' + text + '&url=' + url;
+        document.getElementById('sh-tg').href = 'https://t.me/share/url?url=' + url + '&text=' + text;
+        document.getElementById('share-bar').style.display = 'flex';
+    }
+    (function () {
+        document.getElementById('sh-copy').addEventListener('click', function () { copyLink('Link disalin'); });
+        document.getElementById('sh-ig').addEventListener('click', function () {
+            copyLink('Link disalin. Tempel di Instagram (story, bio, atau pesan).');
+        });
+        document.getElementById('sh-tt').addEventListener('click', function () {
+            copyLink('Link disalin. Tempel di TikTok (bio atau komentar).');
+        });
+        var nb = document.getElementById('sh-native');
+        if (navigator.share) {
+            nb.style.display = 'inline-flex';
+            nb.addEventListener('click', function () {
+                navigator.share({ title: shareTitle, url: location.href }).catch(function () {});
+            });
+        }
+    })();
+
+    // Dropdown bagikan: buka/tutup
+    (function () {
+        var wrap = document.getElementById('share-wrap');
+        var toggle = document.getElementById('share-toggle');
+        function setOpen(open) {
+            if (open) {
+                var r = toggle.getBoundingClientRect();
+                wrap.classList.toggle('up', window.innerHeight - r.bottom < 380 && r.top > 380);
+            }
+            wrap.classList.toggle('open', open);
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        toggle.addEventListener('click', function (e) { e.stopPropagation(); setOpen(!wrap.classList.contains('open')); });
+        document.getElementById('share-menu').addEventListener('click', function () { setTimeout(function () { setOpen(false); }, 50); });
+        document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) setOpen(false); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    })();
 
     // ===== Halaman info dari infomandaga.blogspot.com (tampil di dalam landing page) =====
     var currentPath = null;
@@ -621,6 +730,7 @@
             document.getElementById('article-title').textContent = e.title.$t;
             document.getElementById('article-date').textContent = '';
             document.getElementById('article-body').innerHTML = cleanHTML((e.content && e.content.$t) || '');
+            updateShare(e.title.$t);
         } catch (err) {
             document.getElementById('article-title').textContent = 'Halaman tidak dapat dimuat.';
         }
@@ -632,6 +742,7 @@
         document.getElementById('hero-section').style.display = 'none';
         document.getElementById('berita-section').style.display = 'none';
         document.getElementById('article-view').style.display = 'block';
+        document.getElementById('share-bar').style.display = 'none';
         document.getElementById('article-title').textContent = 'Memuat halaman...';
         document.getElementById('article-date').textContent = '';
         document.getElementById('article-body').innerHTML = '';

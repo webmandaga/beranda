@@ -187,6 +187,9 @@
     .article-body img { max-width: 100%; height: auto !important; border-radius: 14px; margin: 10px auto; display: block; }
     .article-body a { color: var(--accent-light) !important; text-decoration: underline; }
     .article-body iframe { max-width: 100%; border: none; border-radius: 14px; }
+    .article-body iframe.embed-frame { display: block; width: 100%; height: 560px; background: #ffffff; margin: 16px 0; }
+    .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"] { height: auto; aspect-ratio: 16 / 9; }
+    @media (max-width: 600px) { .article-body iframe.embed-frame { height: 420px; } .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"] { height: auto; } }
     .article-body .separator, .article-body table { max-width: 100%; }
     .article-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 36px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); }
     .article-source { color: #ffffff !important; opacity: 0.85; font-size: 0.9rem; text-decoration: none !important; }
@@ -541,8 +544,32 @@
     function cleanHTML(html) {
         var doc = new DOMParser().parseFromString(html, 'text/html');
         doc.querySelectorAll('script, style, object, embed, form, link, meta').forEach(function (n) { n.remove(); });
+        var okFrame = /^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com|drive\.google\.com|docs\.google\.com|google\.com\/maps|forms\.gle|player\.vimeo\.com)\//i;
+        var sheetLink = /^https:\/\/docs\.google\.com\/(spreadsheets|document|presentation)\/d\/e\/[^\s]+\/(pubhtml|pub|embed)/i;
+        var framed = {};
         doc.querySelectorAll('iframe').forEach(function (f) {
-            if (!/^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com|drive\.google\.com)\//i.test(f.getAttribute('src') || '')) f.remove();
+            var src = f.getAttribute('src') || '';
+            if (src.indexOf('//') === 0) src = 'https:' + src;
+            if (!okFrame.test(src)) { f.remove(); return; }
+            f.setAttribute('src', src);
+            f.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+            f.removeAttribute('width');
+            f.removeAttribute('height');
+            f.className = 'embed-frame';
+            framed[src] = true;
+        });
+        // Link spreadsheet/dokumen Google yang dipublikasikan otomatis ditampilkan langsung
+        doc.querySelectorAll('a[href]').forEach(function (a) {
+            var href = a.getAttribute('href') || '';
+            if (!sheetLink.test(href) || framed[href]) return;
+            var fr = doc.createElement('iframe');
+            fr.setAttribute('src', href);
+            fr.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+            fr.className = 'embed-frame';
+            fr.setAttribute('loading', 'lazy');
+            var holder = a.closest('div, p') || a;
+            holder.parentNode.insertBefore(fr, holder.nextSibling);
+            framed[href] = true;
         });
         doc.body.querySelectorAll('*').forEach(function (n) {
             Array.prototype.slice.call(n.attributes).forEach(function (at) {

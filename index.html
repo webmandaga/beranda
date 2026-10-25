@@ -208,8 +208,11 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .article-body iframe { max-width: 100%; border: none; border-radius: 14px; }
     .article-body iframe.embed-frame { display: block; width: 100%; height: 560px; background: #ffffff; margin: 16px 0; }
-    .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"] { height: auto; aspect-ratio: 16 / 9; }
-    @media (max-width: 600px) { .article-body iframe.embed-frame { height: 420px; } .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"] { height: auto; } }
+    .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"], .article-body iframe.embed-frame[src*="blogger.com/video"] { height: auto; aspect-ratio: 16 / 9; }
+    @media (max-width: 600px) { .article-body iframe.embed-frame { height: 420px; } .article-body iframe.embed-frame[src*="youtube"], .article-body iframe.embed-frame[src*="vimeo"], .article-body iframe.embed-frame[src*="blogger.com/video"] { height: auto; } }
+    .list-view { padding: 150px 0 80px; min-height: 80vh; }
+    .list-msg { grid-column: 1 / -1; text-align: center; opacity: 0.9; padding: 40px 0; }
+    @media (max-width: 600px) { .list-view { padding-top: 120px; } }
     .article-body .separator, .article-body table { max-width: 100%; }
     .article-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 36px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); }
     .article-source { color: #ffffff !important; opacity: 0.85; font-size: 0.9rem; text-decoration: none !important; }
@@ -301,13 +304,14 @@
 
                 <li class="has-dropdown"><a href="#">Publikasi</a>
                     <ul class="custom-dropdown">
-                        <li><a href="#">Berita</a></li>
-                        <li><a href="#p//2026/10/pengumuman">Pengumuman</a></li>
-                        <li><a href="#">Agenda</a></li>
-                        <li><a href="#">Galeri Foto</a></li>
-                        <li><a href="#">Galeri Video</a></li>
-                        <li><a href="#">Prestasi</a></li>
-                        <li><a href="#">Arsip</a></li>
+                        <li><a href="#list/mading">Mading</a></li>
+                        <li><a href="#list/berita">Berita</a></li>
+                        <li><a href="#p/2026/10/pengumuman">Pengumuman</a></li>
+                        <li><a href="#p/2026/10/agenda">Agenda</a></li>
+                        <li><a href="#list/foto">Galeri Foto</a></li>
+                        <li><a href="#list/video">Galeri Video</a></li>
+                        <li><a href="#p/2026/10/prestasi">Prestasi</a></li>
+                        <li><a href="#p/2026/10/arsip">Arsip</a></li>
                     </ul>
                 </li>
 
@@ -382,6 +386,21 @@
     </div>
 </section>
 
+<section class="section list-view" id="list-view" style="display:none;">
+    <div class="web-container">
+        <div class="section-title">
+            <h3 id="list-title"></h3>
+            <p id="list-desc"></p>
+        </div>
+        <div class="grid" id="list-grid"></div>
+        <div class="berita-nav" id="list-nav" style="display:none;">
+            <button type="button" class="nav-arrow" id="list-prev" aria-label="Halaman sebelumnya" disabled><i class="fas fa-chevron-left"></i></button>
+            <span class="nav-info" id="list-info"></span>
+            <button type="button" class="nav-arrow" id="list-next" aria-label="Halaman berikutnya"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+</section>
+
 <section class="section article-view" id="article-view" style="display:none;">
     <div class="web-container">
         <div class="article-box">
@@ -433,7 +452,7 @@
         </div>
         <div class="footer-box">
             <h4>Lokasi Madrasah</h4>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.6243254877595!2d110.6575333!3d-7.0533531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e709684338de15d%3A0x53dc4b46f2bb2819!2sMAN%202%20GROBOGAN!5e0!3m2!1sid!2sid!4v1792919993596!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.6243254877595!2d110.6575333!3d-7.0533531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e709684338de15d%3A0x53dc4b46f2bb2819!2sMAN%202%20GROBOGAN!5e0!3m2!1sid!2sid!4v1792919993596!5m2!1sid!2sid" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Peta lokasi MAN 2 Grobogan"></iframe>
         </div>
     </div>
     <div class="copyright">
@@ -589,7 +608,7 @@
         doc.querySelectorAll('iframe').forEach(function (f) {
             var src = f.getAttribute('src') || '';
             if (src.indexOf('//') === 0) src = 'https:' + src;
-            if (!okFrame.test(src)) { f.remove(); return; }
+            if (!okFrame.test(src) && !/^https:\/\/(www\.)?blogger\.com\/video\.g/i.test(src)) { f.remove(); return; }
             f.setAttribute('src', src);
             f.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
             f.removeAttribute('width');
@@ -635,7 +654,9 @@
         }
     }
 
-    function showArticle(id) {
+    function showArticle(id, key) {
+        key = (typeof BLOGS !== 'undefined' && BLOGS[key]) ? key : 'berita';
+        var host = (typeof BLOGS !== 'undefined') ? BLOGS[key].host : 'beritamandaga.blogspot.com';
         currentPost = id;
         document.getElementById('hero-section').style.display = 'none';
         document.getElementById('berita-section').style.display = 'none';
@@ -646,7 +667,7 @@
         document.getElementById('article-body').innerHTML = '';
         window.scrollTo(0, 0);
         var s = document.createElement('script');
-        s.src = 'https://beritamandaga.blogspot.com/feeds/posts/default/' + id + '?alt=json-in-script&callback=renderPost';
+        s.src = 'https://' + host + '/feeds/posts/default/' + id + '?alt=json-in-script&callback=renderPost';
         s.onerror = function () { document.getElementById('article-title').textContent = 'Berita tidak dapat dimuat.'; };
         document.body.appendChild(s);
     }
@@ -753,10 +774,106 @@
         document.body.appendChild(s);
     }
 
+    // ===== Daftar postingan (Berita, Mading, Galeri Foto, Galeri Video) =====
+    var BLOGS = {
+        berita: { host: 'beritamandaga.blogspot.com', title: 'Berita', icon: 'far fa-newspaper', desc: 'Berita terbaru MAN 2 Grobogan' },
+        mading: { host: 'madingmandaga.blogspot.com', title: 'Mading', icon: 'fas fa-clipboard', desc: 'Karya dan informasi dari mading madrasah' },
+        foto:   { host: 'fotomandaga.blogspot.com',   title: 'Galeri Foto', icon: 'far fa-images', desc: 'Dokumentasi foto kegiatan MAN 2 Grobogan' },
+        video:  { host: 'videomandaga.blogspot.com',  title: 'Galeri Video', icon: 'fas fa-video', desc: 'Dokumentasi video kegiatan MAN 2 Grobogan' }
+    };
+    var LIST_PER_PAGE = 9;
+    var listReq = 0;
+    var jsonpSeq = 0;
+    var FALLBACK_IMG = 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=2070&auto=format&fit=crop';
+
+    function jsonp(url, ok, fail) {
+        var name = '__jp' + (++jsonpSeq);
+        var s = document.createElement('script');
+        function cleanup() { try { delete window[name]; } catch (e) { window[name] = undefined; } s.remove(); }
+        window[name] = function (d) { cleanup(); ok(d); };
+        s.onerror = function () { cleanup(); if (fail) fail(); };
+        s.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'alt=json-in-script&callback=' + name;
+        document.body.appendChild(s);
+    }
+
+    function entryThumb(e) {
+        var html = (e.content && e.content.$t) || '';
+        if (e['media$thumbnail']) return e['media$thumbnail'].url.replace(/\/s\d+(-c)?\//, '/w640/');
+        var m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (m) return m[1];
+        var y = html.match(/youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+        if (y) return 'https://img.youtube.com/vi/' + y[1] + '/hqdefault.jpg';
+        return FALLBACK_IMG;
+    }
+
+    function buildCard(e, key) {
+        var html = (e.content && e.content.$t) || (e.summary && e.summary.$t) || '';
+        var text = (new DOMParser().parseFromString(html, 'text/html').body.textContent || '').replace(/\s+/g, ' ').trim();
+        if (text.length > 140) text = text.slice(0, 140).trim() + '…';
+        var pid = ((e.id && e.id.$t) || '').match(/post-(\d+)/);
+        var a = document.createElement('a');
+        a.className = 'card';
+        a.href = pid ? '#a/' + key + '/' + pid[1] : '#';
+        var im = document.createElement('img');
+        im.src = entryThumb(e); im.alt = e.title.$t; im.loading = 'lazy';
+        var box = document.createElement('div'); box.className = 'card-content';
+        var dt = document.createElement('span'); dt.className = 'card-date';
+        dt.textContent = new Date(e.published.$t).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        var h = document.createElement('h4'); h.textContent = e.title.$t;
+        box.appendChild(dt); box.appendChild(h);
+        if (text) { var p = document.createElement('p'); p.textContent = text; box.appendChild(p); }
+        a.appendChild(im); a.appendChild(box);
+        return a;
+    }
+
+    function showList(key, page) {
+        var b = BLOGS[key];
+        if (!b) { showHome(true); return; }
+        if (!page || page < 1) page = 1;
+        currentPost = null; currentPath = null;
+        document.getElementById('hero-section').style.display = 'none';
+        document.getElementById('berita-section').style.display = 'none';
+        document.getElementById('article-view').style.display = 'none';
+        document.getElementById('list-view').style.display = 'block';
+        document.getElementById('list-title').innerHTML = '<i class="' + b.icon + '"></i> ' + b.title;
+        document.getElementById('list-desc').textContent = b.desc;
+        document.getElementById('list-nav').style.display = 'none';
+        var grid = document.getElementById('list-grid');
+        grid.innerHTML = '<p class="list-msg">Memuat...</p>';
+        document.title = b.title + ' - MAN 2 Grobogan';
+        window.scrollTo(0, 0);
+
+        var req = ++listReq;
+        function fail() {
+            if (req !== listReq) return;
+            grid.innerHTML = '<p class="list-msg">' + b.title + ' tidak dapat dimuat.</p>';
+        }
+        jsonp('https://' + b.host + '/feeds/posts/default?max-results=' + LIST_PER_PAGE + '&start-index=' + ((page - 1) * LIST_PER_PAGE + 1), function (data) {
+            if (req !== listReq) return;
+            var entries = (data.feed && data.feed.entry) || [];
+            grid.innerHTML = '';
+            if (!entries.length) { grid.innerHTML = '<p class="list-msg">Belum ada postingan.</p>'; return; }
+            entries.forEach(function (e) { grid.appendChild(buildCard(e, key)); });
+            var total = parseInt((data.feed['openSearch$totalResults'] || {}).$t, 10) || 0;
+            var pages = Math.max(1, Math.ceil(total / LIST_PER_PAGE));
+            if (pages > 1) {
+                document.getElementById('list-nav').style.display = 'flex';
+                document.getElementById('list-info').textContent = page + ' / ' + pages;
+                var prev = document.getElementById('list-prev'), next = document.getElementById('list-next');
+                prev.disabled = page <= 1;
+                next.disabled = page >= pages;
+                prev.onclick = function () { location.hash = page - 1 <= 1 ? '#list/' + key : '#list/' + key + '/' + (page - 1); };
+                next.onclick = function () { location.hash = '#list/' + key + '/' + (page + 1); };
+            }
+        }, fail);
+    }
+
     function showHome(scroll) {
         currentPost = null;
         currentPath = null;
         document.title = 'MAN 2 Grobogan - Cerdas, Santun, dan Ceria';
+        listReq++;
+        document.getElementById('list-view').style.display = 'none';
         document.getElementById('article-view').style.display = 'none';
         document.getElementById('hero-section').style.display = '';
         document.getElementById('berita-section').style.display = '';
@@ -765,8 +882,13 @@
 
     function route() {
         var m = location.hash.match(/^#berita-(\d+)$/);
+        var am = location.hash.match(/^#a\/([a-z]+)\/(\d+)$/);
+        var lm = location.hash.match(/^#list\/([a-z]+)(?:\/(\d+))?$/);
         var pg = location.hash.match(/^#p\/(\d{4}\/\d{2}\/[a-z0-9-]+)$/);
-        if (m) { currentPath = null; showArticle(m[1]); }
+        document.getElementById('list-view').style.display = 'none';
+        if (m) { currentPath = null; showArticle(m[1], 'berita'); }
+        else if (am) { currentPath = null; showArticle(am[2], am[1]); }
+        else if (lm) showList(lm[1], parseInt(lm[2] || '1', 10));
         else if (pg) showPage(pg[1]);
         else showHome(location.hash === '' || location.hash === '#');
     }

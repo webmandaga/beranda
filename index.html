@@ -206,10 +206,13 @@
     .article-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 36px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); }
     .article-source { color: #ffffff !important; opacity: 0.85; font-size: 0.9rem; text-decoration: none !important; }
     .article-source:hover { color: var(--yellow) !important; }
-    @media (max-width: 600px) { .article-box { padding: 22px; } .article-view { padding-top: 120px; } }
+    @media (max-width: 600px) { .article-box { padding: 22px; } .article-view { padding-top: 120px; } .article-title { font-size: 1.3rem; line-height: 1.35; margin-bottom: 18px; } }
 
     /* ========== RESPONSIVE ========== */
     @media (max-width: 992px) {
+        /* HP/tablet: foto tetap jadi latar di belakang tulisan; tinggi hero mengikuti isi
+           (bukan satu layar penuh) supaya foto tidak terpotong terlalu banyak */
+        .hero { min-height: 0; padding: 130px 0 64px; }
         .hero-overlay { background: linear-gradient(180deg, rgba(26, 16, 61, 0.8) 0%, rgba(26, 16, 61, 0.6) 100%); }
         .footer-grid { grid-template-columns: 1fr; }
         /* backdrop-filter pada header membuat menu "fixed" ikut terpotong; dimatikan di HP */
@@ -233,6 +236,63 @@
         .custom-menu > li.has-dropdown.open .custom-dropdown { display: block !important; }
         .hamburger { display: block; }
         body.menu-open { overflow: hidden !important; }
+    }
+
+    /* ========== HERO FOTO: HP = SAMA SEPERTI PC ========== */
+    .hero-media { position: absolute; inset: 0; z-index: 0; }
+
+    @media (max-width: 700px) {
+        /* Susunan HP: foto penuh di atas (di bawah header), tulisan di bawah foto */
+        .hero { display: block; padding: 85px 0 48px; min-height: 0; }
+
+        .hero-media {
+            position: relative;
+            inset: auto;
+            width: 100%;
+            aspect-ratio: var(--hero-ratio, 16 / 9);
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(var(--hero-zoom-hp, 1));
+            transform-origin: center;
+        }
+        /* Lapisan tipis agar foto tetap cerah seperti di PC */
+        .hero-overlay {
+            background: linear-gradient(180deg, rgba(26, 16, 61, 0.10) 0%, rgba(26, 16, 61, 0.25) 55%, rgba(26, 16, 61, 0.60) 100%);
+        }
+
+        /* Tulisan naik sedikit ke bagian foto yang memudar */
+        .hero-grid { margin-top: -56px; }
+        .hero-text { max-width: 100%; }
+        .hero-text h2 {
+            font-size: 1.85rem;
+            line-height: 1.2;
+            margin-bottom: 14px;
+            letter-spacing: -0.3px;
+        }
+        .hero-text h2::before {
+            content: '';
+            display: block;
+            width: 48px;
+            height: 4px;
+            border-radius: 4px;
+            background: var(--accent);
+            margin-bottom: 14px;
+        }
+        .hero-text p {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            margin-bottom: 24px;
+            opacity: 0.95 !important;
+        }
+        .hero-btn { padding: 12px 24px; font-size: 0.95rem; }
     }
 </style>
 </head>
@@ -314,8 +374,10 @@
 </header>
 
 <section class="hero" id="hero-section">
-    <img class="hero-bg" id="hero-bg" alt="" referrerpolicy="no-referrer" decoding="async">
-    <div class="hero-overlay" id="hero-overlay"></div>
+    <div class="hero-media" id="hero-media">
+        <img class="hero-bg" id="hero-bg" alt="" referrerpolicy="no-referrer" decoding="async">
+        <div class="hero-overlay" id="hero-overlay"></div>
+    </div>
     <div class="web-container hero-grid">
         <div class="hero-text">
             <h2>Madrasah Digital Modern &amp; Futuristik</h2>
@@ -531,11 +593,19 @@
     var HERO = {
         // Link langsung ke file gambar (.jpg / .png / .webp). Kosongkan '' untuk
         // memakai warna ungu bawaan.
-        gambar: 'https://i.ibb.co.com/ZRn2zs1h/Whats-App-Image-2026-10-29-at-09-30-21.jpg',
+        gambar: 'https://i.ibb.co.com/fdjP5Dgd/Whats-App-Image-2026-10-29-at-10-09-45.jpg',
 
         // Kegelapan lapisan di atas gambar agar tulisan tetap terbaca:
         // 0 = tanpa lapisan, 1 = paling gelap.
-        gelap: 1
+        gelap: 1,
+
+        // Bagian foto yang diutamakan saat harus dipotong (terutama di HP):
+        // 'center', 'left center', 'right center', 'center top', '30% 50%', dst.
+        posisi: 'center',
+
+        // Zoom foto di HP (layar <= 700px):
+        // 100 = foto selebar layar (sama seperti tampilan PC), 120 = lebih dekat.
+        zoomHP: 100
     };
     // >>>>>>>>>>>>>>>>>>  AKHIR BAGIAN YANG DIUBAH  <<<<<<<<<<<<<<<<<<<<<<<<<<<
     // =====================================================================
@@ -544,10 +614,17 @@
         var bg = document.getElementById('hero-bg');
         var overlay = document.getElementById('hero-overlay');
         if (!bg || !HERO.gambar) return;   // kosong = latar ungu bawaan tetap tampil
+        document.documentElement.style.setProperty('--hero-zoom-hp', String(Math.max(100, Number(HERO.zoomHP) || 100) / 100));
         bg.onload = function () {
             bg.classList.add('is-ready');
+            // Tinggi foto di HP mengikuti rasio asli foto (dibatasi agar tidak terlalu tinggi/pendek)
+            if (bg.naturalWidth && bg.naturalHeight) {
+                var r = Math.min(2.4, Math.max(1.2, bg.naturalWidth / bg.naturalHeight));
+                document.documentElement.style.setProperty('--hero-ratio', String(r));
+            }
             if (overlay) overlay.style.opacity = Math.min(1, Math.max(0, Number(HERO.gelap) || 0));
         };
+        bg.style.objectPosition = HERO.posisi || 'center';
         bg.onerror = function () { bg.remove(); };   // gambar gagal dimuat: latar ungu tetap tampil
         bg.src = HERO.gambar;
     })();
@@ -591,6 +668,15 @@
                 if (name.indexOf('on') === 0 || /^\s*javascript:/i.test(at.value)) n.removeAttribute(at.name);
             });
             if (n.tagName === 'A') { n.target = '_blank'; n.rel = 'noopener'; }
+        });
+        // Rapikan jarak kosong: <br> beruntun dan div/p kosong dari editor Blogger
+        doc.body.querySelectorAll('br').forEach(function (br) {
+            var prev = br.previousSibling;
+            while (prev && prev.nodeType === 3 && !prev.textContent.trim()) prev = prev.previousSibling;
+            if (prev && prev.nodeName === 'BR') br.remove();
+        });
+        doc.body.querySelectorAll('div, p').forEach(function (n) {
+            if (!n.textContent.trim() && !n.querySelector('img, iframe, table, video, a')) n.remove();
         });
         return doc.body.innerHTML;
     }

@@ -263,6 +263,17 @@ async function writePage(rel, html) {
   await writeFile(`${rel}/index.html`, html);
 }
 
+/* Ambil isi halaman dari folder content/ (sumber kebenaran lokal).
+   Dipakai untuk halaman yang postingnya di Blogger sengaja dikosongkan. */
+async function localContent(slug) {
+  try {
+    const html = await readFile(`content/${slug}.html`, 'utf8');
+    return html.trim() ? html : null;
+  } catch {
+    return null;
+  }
+}
+
 const sitemapUrls = [];
 function addSitemap(url) { sitemapUrls.push(url); }
 
@@ -321,7 +332,10 @@ async function main() {
     const m = p.url.match(/\/([^\/]+)\.html$/);
     if (!m) continue;
     const slug = m[1];
-    map[slug] = { title: p.title, published: p.published, url: p.url, html: p.html };
+    // Isi lokal (content/<slug>.html) mengalahkan Blogger bila ada.
+    // Dipakai untuk halaman yang(postingnya sengaja dikosongkan di Blogger.
+    const body = await localContent(slug) || p.html;
+    map[slug] = { title: p.title, published: p.published, url: p.url, html: body };
     const pageUrl = `${SITE_URL}p/${slug}/`;
     await writePage(`p/${slug}`, articlePage({
       title: p.title,
@@ -329,7 +343,7 @@ async function main() {
       image: p.thumb,
       pageUrl,
       date: p.published,
-      body: p.html
+      body
     }));
     addSitemap(pageUrl);
   }

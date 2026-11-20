@@ -332,13 +332,17 @@ async function main() {
     const m = p.url.match(/\/([^\/]+)\.html$/);
     if (!m) continue;
     const slug = m[1];
+    // Override judul halaman statis bila perlu agar lebih ringkas/sesuai.
+    const titleOverride = {
+      'visi-misi-dan-tujuan': 'Visi dan Misi'
+    };
+    const title = titleOverride[slug] || p.title;
     // Isi lokal (content/<slug>.html) mengalahkan Blogger bila ada.
-    // Dipakai untuk halaman yang(postingnya sengaja dikosongkan di Blogger.
     const body = await localContent(slug) || p.html;
-    map[slug] = { title: p.title, published: p.published, url: p.url, html: body };
+    map[slug] = { title, published: p.published, url: p.url, html: body };
     const pageUrl = `${SITE_URL}p/${slug}/`;
     await writePage(`p/${slug}`, articlePage({
-      title: p.title,
+      title,
       description: p.description,
       image: p.thumb,
       pageUrl,

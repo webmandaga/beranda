@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadwal ASAS Gasal 2026/2027 - MAN 2 Grobogan</title>
+<meta name="description" content="Jadwal Asesmen Sumatif Akhir Semester (ASAS) Gasal Tahun Ajaran 2026/2027 Madrasah Aliyah Negeri 2 Grobogan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+    :root {
+        --primary: #673DE6;
+        --primary-dark: #1A103D;
+        --accent: #0DB5A4;
+        --accent-light: #14C9B6;
+        --yellow: #FFC400;
+        --card-bg: rgba(255, 255, 255, 0.08);
+        --card-border: rgba(255, 255, 255, 0.15);
+        --glass-blur: blur(16px);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    html, body {
+        margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw !important;
+        overflow-x: hidden !important; font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #24125a 0%, #4c29bc 40%, #673DE6 70%, #3a1999 100%) !important;
+        background-attachment: fixed !important; background-size: cover !important; background-repeat: no-repeat !important;
+        color: #ffffff !important; min-height: 100vh !important; -webkit-font-smoothing: antialiased;
+    }
+    .web-container { width: 90%; max-width: 1280px; margin: auto; overflow: visible !important; }
+
+    /* ========== HEADER ========== */
+    .custom-header {
+        width: 100%; position: fixed; top: 0; left: 0; z-index: 999999 !important;
+        backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+        background: rgba(26, 16, 61, 0.75); border-bottom: 1px solid var(--card-border);
+    }
+    .custom-navbar { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-box {
+        width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,0.12);
+        display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;
+    }
+    .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+    .logo-text h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.5px; color: #fff; line-height: 1.2; }
+    .logo-text span { font-size: 11px; color: var(--accent-light); font-style: italic; }
+    .custom-menu { display: flex; list-style: none; align-items: center; gap: 4px; }
+    .custom-menu > li { position: relative; }
+    .custom-menu > li > a {
+        color: #fff; text-decoration: none; font-size: 14px; font-weight: 500;
+        padding: 10px 14px; border-radius: 12px; transition: background 0.25s ease; display: block;
+    }
+    .custom-menu > li > a:hover { background: rgba(255,255,255,0.12); }
+    .custom-dropdown {
+        list-style: none; position: absolute; top: calc(100% + 8px); left: 0; min-width: 220px;
+        background: rgba(26,16,61,0.97); border: 1px solid var(--card-border); border-radius: 16px;
+        padding: 8px; opacity: 0; visibility: hidden; transform: translateY(-8px);
+        transition: all 0.25s ease; box-shadow: 0 12px 34px rgba(0,0,0,0.4);
+    }
+    .has-dropdown:hover .custom-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+    .custom-dropdown a {
+        display: block; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 13px;
+        padding: 9px 14px; border-radius: 10px; transition: all 0.2s ease;
+    }
+    .custom-dropdown a:hover { background: rgba(13,181,164,0.18); color: #fff; padding-left: 18px; }
+    .ppdb-cta a {
+        background: var(--accent); color: #fff !important; font-weight: 700 !important;
+        padding: 10px 22px !important; border-radius: 50px !important; margin-left: 6px;
+        box-shadow: 0 6px 18px rgba(13,181,164,0.35);
+    }
+    .ppdb-cta a:hover { background: var(--accent-dark); }
+    .hamburger {
+        display: none; background: rgba(255,255,255,0.1); border: 1px solid var(--card-border);
+        color: #fff; width: 42px; height: 42px; border-radius: 12px; font-size: 18px; cursor: pointer;
+    }
+
+    /* ========== KONTEN ========== */
+    .asesmen-wrap { padding: 120px 0 80px; min-height: 80vh; }
+    .page-head { text-align: center; margin-bottom: 30px; }
+    .page-head .tag {
+        display: inline-block; background: rgba(13,181,164,0.18); color: var(--accent-light);
+        border: 1px solid rgba(13,181,164,0.35); padding: 7px 18px; border-radius: 50px;
+        font-size: 12px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 16px;
+    }
+    .page-head h2 { font-size: clamp(1.5rem, 3.4vw, 2.3rem); font-weight: 800; margin-bottom: 10px; line-height: 1.25; }
+    .page-head p { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 720px; margin: 0 auto; line-height: 1.6; }
+
+    .article-box {
+        max-width: 1100px !important; margin: auto; padding: 30px 32px !important;
+        background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); border-radius: 28px;
+        backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; z-index: 10;
+    }
+
+    .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .filter-group { display: flex; flex-direction: column; }
+    label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 6px; }
+    select {
+        padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; outline: none; font-family: inherit;
+        font-size: 14px;
+    }
+    select option { background: #1A103D; color: #fff; }
+
+    .quick-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+    .qp {
+        padding: 6px 12px; border-radius: 50px; background: rgba(255,255,255,0.1);
+        border: 1px solid var(--card-border); color: rgba(255,255,255,0.85); font-size: 12px;
+        font-weight: 600; cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+    }
+    .qp:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .qp.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .count { font-size: 13px; color: var(--accent-light); margin-bottom: 18px; font-weight: 600; }
+
+    /* ===== TABEL DOKUMEN (gaya seperti lampiran resmi) ===== */
+    .kelas-seksi { margin-bottom: 34px; }
+    .kelas-head {
+        display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+        color: #fff; font-weight: 700; font-size: 17px;
+    }
+    .kelas-head i { color: var(--accent-light); }
+    .kelas-head .ringkasan { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6); margin-left: 4px; }
+
+    .hari-judul {
+        font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); margin: 20px 0 8px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .hari-judul::after { content: ""; flex: 1; height: 1px; background: var(--card-border); }
+
+    .tbl-wrap { background: #fff; padding: 10px; border-radius: 6px; overflow-x: auto; }
+    table.jadwal {
+        border-collapse: collapse; font-family: Arial, Helvetica, sans-serif;
+        font-size: 11pt; color: #000; background: #fff; width: 100%; max-width: 420px;
+    }
+    table.jadwal td {
+        border: 1px solid #b0b0b0; padding: 3px 6px; text-align: left;
+        vertical-align: middle; line-height: 1.45;
+    }
+    table.jadwal td.kol-jam { width: 40%; }
+    table.jadwal tr.kosong td { height: 18px; }
+    table.jadwal tr.kepala td { font-weight: normal; }
+
+    .kosong-info { font-size: 12px; color: rgba(255,255,255,0.55); font-style: italic; padding: 6px 0; }
+
+    /* ========== FOOTER ========== */
+    .custom-footer { background: rgba(10,6,26,0.6); padding: 54px 0 0; margin-top: 40px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding-bottom: 34px; }
+    .footer-box h4 { font-size: 17px; margin-bottom: 16px; color: #fff; }
+    .contact-item { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; font-size: 13px; color: rgba(255,255,255,0.8); }
+    .contact-item i { color: var(--accent-light); width: 16px; }
+    .contact-item a { color: rgba(255,255,255,0.8); text-decoration: none; }
+    .contact-item a:hover { color: var(--accent-light); }
+    .social { display: flex; gap: 12px; margin-top: 18px; }
+    .social a {
+        width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.1);
+        display: flex; align-items: center; justify-content: center; color: #fff;
+        text-decoration: none; transition: all 0.25s ease;
+    }
+    .social a:hover { background: var(--accent); transform: translateY(-3px); }
+    .footer-box iframe { width: 100%; height: 220px; border: 0; border-radius: 16px; }
+    .copyright { text-align: center; padding: 18px; border-top: 1px solid var(--card-border); font-size: 12px; color: rgba(255,255,255,0.6); }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 992px) {
+        .hamburger { display: block; }
+        .custom-menu {
+            position: fixed; top: 72px; left: 0; right: 0; background: rgba(26,16,61,0.98);
+            flex-direction: column; align-items: stretch; padding: 16px 20px 26px; gap: 2px;
+            max-height: 0; overflow: hidden; transition: max-height 0.35s ease; border-bottom: 1px solid var(--card-border);
+        }
+        .custom-menu.active { max-height: 78vh; overflow-y: auto; }
+        .custom-dropdown { display: none; position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; background: transparent; border: 0; padding: 0 0 0 12px; }
+        .has-dropdown.open .custom-dropdown { display: block; }
+        .ppdb-cta a { margin: 8px 0 0; text-align: center; }
+        .footer-grid { grid-template-columns: 1fr; }
+        .article-box { padding: 22px 18px !important; }
+    }
+    @media (max-width: 700px) {
+        .asesmen-wrap { padding: 100px 0 60px; }
+        .filters { grid-template-columns: 1fr; }
+        .page-head h2 { font-size: 1.4rem; }
+        table.jadwal { max-width: 100%; font-size: 10.5pt; }
+        .tbl-wrap { padding: 6px; }
+    }
+</style>
+</head>
+<body>
+
+<header class="custom-header">
+    <div class="web-container">
+        <nav class="custom-navbar">
+            <a href="../" class="logo">
+                <div class="logo-box"><img src="../assets/logo.webp" alt="Logo MAN 2 Grobogan"></div>
+                <div class="logo-text">
+                    <h1>MAN 2 GROBOGAN</h1>
+                    <span>Cerdas, Santun, dan Berprestasi</span>
+                </div>
+            </a>
+
+            <ul class="custom-menu">
+                <li><a href="../">Beranda</a></li>
+
+                <li class="has-dropdown"><a href="#">Profil</a>
+                    <ul class="custom-dropdown">
+                        <li><a href="../#p/sejarah-madrasah">Sejarah Madrasah</a></li>
+                        <li><a href="../#p/visi-misi-dan-tujuan">Visi dan Misi</a></li>
+                        <li><a href="../#p/sambutan-kepala-madrasah">Sambutan Kepala Madrasah</a></li>
+                        <li><a href="../#p/struktur-organisasi">Struktur Organisasi</a></li>
+                        <li><a href="../#p/guru-dan-tenaga-kependidikan">Guru dan Tenaga Kependidikan</a></li>
+                        <li><a href="../#p/sarana-dan-prasarana">Sarana dan Prasarana</a></li>
+                        <li><a href="../#p/identitas-madrasah">Identitas Madrasah</a></li>
+                    </ul>
+                </li>
+
+                <li class="has-dropdown"><a href="#">Akademik</a>
+                    <ul class="custom-dropdown">
+                        <li><a href="../#p/kurikulum">Kurikulum</a></li>
+                        <li><a href="../#p/kalender-akademik">Kalender Akademik</a></li>
+                        <li><a href="../jadwal/">Jadwal Pelajaran</a></li>
+                        <li><a href="./" style="font-weight:700;color:var(--accent-light)">Jadwal ASAS</a></li>
+                        <li><a href="../#p/program-pembelajaran">Program Pembelajaran</a></li>
+                        <li><a href="https://wprdm.my.id/man2grobogan/" target="_blank" rel="noopener">RDM</a></li>
+                        <li><a href="../#p/dokumen-akademik">Dokumen Akademik</a></li>
+                        <li><a href="../#p/asesmen-dan-evaluasi">Asesmen dan Evaluasi</a></li>
+                        <li><a href="../#p/unduhan-akademik">Unduhan Akademik</a></li>
+                    </ul>
+                </li>
+
+                <li class="has-dropdown"><a href="#">Kesiswaan</a>
+                    <ul class="custom-dropdown">
+                        <li><a href="../#p/osim">OSIM</a></li>
+                        <li><a href="../#p/ekstrakurikuler">Ekstrakurikuler</a></li>
+                        <li><a href="../#p/tata-tertib-siswa">Tata Tertib Siswa</a></li>
+                        <li><a href="../#p/bkkonseling">BK/Konseling</a></li>
+                        <li><a href="../#p/prestasi-siswa">Prestasi Siswa</a></li>
+                        <li><a href="../#p/alumni">Alumni</a></li>
+                    </ul>
+                </li>
+
+                <li class="has-dropdown"><a href="#">Publikasi</a>
+                    <ul class="custom-dropdown">
+                        <li><a href="../#list/mading">Mading</a></li>
+                        <li><a href="../#list/berita">Berita</a></li>
+                        <li><a href="../#p/pengumuman">Pengumuman</a></li>
+                        <li><a href="../#p/agenda">Agenda</a></li>
+                        <li><a href="../#list/foto">Galeri Foto</a></li>
+                        <li><a href="../#list/video">Galeri Video</a></li>
+                        <li><a href="../#p/prestasi">Prestasi</a></li>
+                        <li><a href="../#p/arsip">Arsip</a></li>
+                    </ul>
+                </li>
+
+                <li class="ppdb-cta"><a href="https://ppdbman2grobogan.sch.id/" target="_blank" rel="noopener">PPDB</a></li>
+            </ul>
+
+            <button class="hamburger" aria-label="Menu Mobile"><i class="fas fa-bars"></i></button>
+        </nav>
+    </div>
+</header>
+
+<section class="asesmen-wrap">
+    <div class="web-container">
+
+        <div class="page-head">
+            <span class="tag"><i class="fas fa-clipboard-check" aria-hidden="true"></i> Asesmen Sumatif Akhir Semester</span>
+            <h2>Jadwal Ujian ASAS Gasal 2026/2027</h2>
+            <p>Jadwal pelaksanaan Asesmen Sumatif Akhir Semester Gasal Tahun Ajaran 2026/2027. Setiap kelas memiliki jadwal tersendiri.</p>
+        </div>
+
+        <div class="article-box">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="fKelas">Kelas</label>
+                    <select id="fKelas"></select>
+                </div>
+                <div class="filter-group">
+                    <label for="fHari">Hari</label>
+                    <select id="fHari"></select>
+                </div>
+            </div>
+
+            <div class="quick-pick" id="quickPick"></div>
+
+            <div class="count" id="count"></div>
+            <div id="hasil"></div>
+        </div>
+
+    </div>
+</section>
+
+<footer class="custom-footer" id="kontak">
+    <div class="web-container footer-grid">
+        <div class="footer-box">
+            <h4>Kontak Kami</h4>
+            <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Jl. Pilang Kidul Gubug, Kec. Gubug, Kab. Grobogan</span></div>
+            <div class="contact-item"><i class="fas fa-phone-alt"></i><a href="tel:02925150494">02925150494</a></div>
+            <div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:admin@man2-grobogan.sch.id">admin@man2-grobogan.sch.id</a></div>
+            <div class="social">
+                <a href="https://www.youtube.com/@man2grobogan" target="_blank" rel="noopener" title="YouTube MAN 2 Grobogan"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.instagram.com/man2grobogan" target="_blank" rel="noopener" title="Instagram MAN 2 Grobogan"><i class="fab fa-instagram"></i></a>
+                <a href="mailto:admin@man2-grobogan.sch.id" title="Kirim Email"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+        <div class="footer-box">
+            <h4>Lokasi Madrasah</h4>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.6243254877595!2d110.6575333!3d-7.0533531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e709684338de15d%3A0x53dc4b46f2bb2819!2sMAN%202%20GROBOGAN!5e0!3m2!1sid!2sid!4v1792919993596!5m2!1sid!2sid" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Peta lokasi MAN 2 Grobogan"></iframe>
+        </div>
+    </div>
+    <div class="copyright">© 2026 MAN 2 Grobogan. Hak Cipta Dilindungi.</div>
+</footer>
+
+<script>
+    (function () {
+        var burger = document.querySelector('.hamburger');
+        var menu = document.querySelector('.custom-menu');
+        function setMenu(open) {
+            menu.classList.toggle('active', open);
+            burger.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+            if (!open) document.querySelectorAll('.has-dropdown.open').forEach(function (li) { li.classList.remove('open'); });
+        }
+        burger.addEventListener('click', function () { setMenu(!menu.classList.contains('active')); });
+        menu.querySelectorAll('a').forEach(function (a) {
+            if (a.parentElement.classList.contains('has-dropdown')) return;
+            a.addEventListener('click', function () { setMenu(false); });
+        });
+        window.addEventListener('resize', function () { if (window.innerWidth > 992) setMenu(false); });
+        document.querySelectorAll('.has-dropdown > a').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                if (window.innerWidth <= 992) {
+                    var li = link.parentElement;
+                    if (link.getAttribute('href') === '#') e.preventDefault();
+                    var wasOpen = li.classList.contains('open');
+                    document.querySelectorAll('.has-dropdown.open').forEach(function (o) { o.classList.remove('open'); });
+                    if (!wasOpen) li.classList.add('open');
+                }
+            });
+        });
+    })();
+
+    fetch("data.json").then(function (r) { return r.json(); }).then(function (DATA) {
+        var $ = function (id) { return document.getElementById(id); };
+        var META = DATA.meta;
+
+
+        // ---- Filter kelas ----
+        var selKelas = $("fKelas");
+        var oAll = document.createElement("option");
+        oAll.value = ""; oAll.textContent = "Semua Kelas";
+        selKelas.appendChild(oAll);
+        META.kelas.forEach(function (k) {
+            var o = document.createElement("option");
+            o.value = k.id;
+            o.textContent = "kelas " + k.id;
+            selKelas.appendChild(o);
+        });
+
+        // ---- Filter hari ----
+        var selHari = $("fHari");
+        var oAllH = document.createElement("option");
+        oAllH.value = ""; oAllH.textContent = "Semua Hari";
+        selHari.appendChild(oAllH);
+        DATA.hari.forEach(function (h, i) {
+            var o = document.createElement("option");
+            o.value = String(i);
+            o.textContent = h.hari + ", " + h.tanggalSingkat;
+            selHari.appendChild(o);
+        });
+
+        // ---- Quick pick kelas ----
+        var qp = $("quickPick");
+        META.kelas.forEach(function (k) {
+            var b = document.createElement("button");
+            b.className = "qp";
+            b.type = "button";
+            b.dataset.kelas = k.id;
+            b.textContent = k.id;
+            b.addEventListener("click", function () {
+                selKelas.value = (selKelas.value === k.id) ? "" : k.id;
+                render();
+            });
+            qp.appendChild(b);
+        });
+
+        function esc(s) {
+            return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function tabelKelas(kelasId, kelompokId, hari) {
+            // mapel untuk kelas ini pada setiap sesi (data di-key per kelompok kolom)
+            var mapelSesi = [];
+            var ada = false;
+            hari.sesi.forEach(function (s) {
+                var m = s.mata[kelompokId];
+                if (m) ada = true;
+                mapelSesi.push({ jam: s.jam, waktu: s.waktu, mapel: m || null });
+            });
+
+            var rows = mapelSesi.map(function (s) {
+                if (!s.mapel) return "";
+                return '<tr><td class="kol-jam">' + esc(s.jam + " (" + s.waktu + ")") + '</td><td>' + esc(s.mapel) + "</td></tr>";
+            }).join("");
+
+            var isi = ada
+                ? '<div class="tbl-wrap"><table class="jadwal">' +
+                  '<tr class="kepala"><td>hari</td><td>' + esc("kelas " + kelasId) + '</td></tr>' +
+                  '<tr class="kosong"><td>&nbsp;</td><td>&nbsp;</td></tr>' +
+                  '<tr class="kepala"><td>jam ke</td><td>Mata Pelajaran</td></tr>' +
+                  rows + '</table></div>'
+                : '<div class="kosong-info">Tidak ada mata pelajaran pada hari ini untuk kelas ' + esc(kelasId) + '.</div>';
+
+            return '<div class="hari-blok">' +
+                '<div class="hari-judul"><i class="fas fa-calendar-day" aria-hidden="true"></i>' + esc(hari.hari + ", " + hari.tanggalSingkat) + '</div>' +
+                isi + '</div>';
+        }
+
+        function render() {
+            var kelasVal = $("fKelas").value;
+            var hariVal = $("fHari").value;
+
+            var kelasDipilih = META.kelas.filter(function (k) { return !kelasVal || k.id === kelasVal; });
+            var hariDipilih = DATA.hari.map(function (h, i) { return { h: h, i: i }; }).filter(function (x) {
+                return hariVal === "" || x.i === parseInt(hariVal, 10);
+            });
+
+            var html = "";
+            var totalTabel = 0;
+            kelasDipilih.forEach(function (k) {
+                var blok = "";
+                hariDipilih.forEach(function (x) {
+                    blok += tabelKelas(k.id, k.kelompok, x.h);
+                });
+                totalTabel += hariDipilih.length;
+                html += '<div class="kelas-seksi">' +
+                    '<div class="kelas-head"><i class="fas fa-users" aria-hidden="true"></i>Kelas ' + esc(k.id) +
+                    '<span class="ringkasan">Kelompok ' + esc(META.kelompokLabel[k.kelompok]) + '</span></div>' +
+                    blok + '</div>';
+            });
+
+            $("hasil").innerHTML = html || '<div class="kosong-info">Tidak ada data yang ditampilkan.</div>';
+            $("count").textContent = kelasDipilih.length + " kelas, " + hariDipilih.length + " hari, " + totalTabel + " tabel jadwal";
+
+            // aktifkan quick pick
+            document.querySelectorAll('.qp').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.kelas === kelasVal);
+            });
+        }
+
+        ["fKelas", "fHari"].forEach(function (id) { $(id).addEventListener("change", render); });
+        render();
+    });
+</script>
+</body>
+</html>

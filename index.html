@@ -136,6 +136,15 @@
     .hero-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.8s ease; background: linear-gradient(90deg, rgba(20, 12, 48, 0.94) 0%, rgba(20, 12, 48, 0.65) 55%, rgba(20, 12, 48, 0.3) 100%); }
     .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; z-index: 2; position: relative; }
     .hero-text { max-width: 660px; }
+    .hero-kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent-light); background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.22); padding: 7px 15px; border-radius: 50px; margin-bottom: 18px; }
+    .hero-kicker i { font-size: 0.9em; }
+    .hero-kicker[hidden] { display: none; }
+    .hero-text .hero-meta { font-size: 0.9rem; opacity: 0.85; margin: -18px 0 26px; display: flex; align-items: center; gap: 8px; }
+    .hero-meta[hidden] { display: none; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+    .hero-link { display: inline-flex; align-items: center; gap: 8px; color: #ffffff; font-weight: 600; text-decoration: none; border-bottom: 2px solid rgba(255, 255, 255, 0.45); padding-bottom: 3px; transition: all 0.3s ease; }
+    .hero-link:hover { border-bottom-color: #ffffff; gap: 12px; }
+    .hero-link[hidden] { display: none; }
     .hero-text h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.15; margin-bottom: 20px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
     .hero-text p { font-size: 1.1rem; opacity: 0.95; margin-bottom: 32px; line-height: 1.6; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
     .hero-btn { display: inline-flex; align-items: center; gap: 12px; background: var(--accent); color: #ffffff; padding: 14px 30px; border-radius: 50px; text-decoration: none; font-weight: 600; box-shadow: 0 8px 24px rgba(8, 121, 110, 0.4); transition: all 0.3s ease; }
@@ -340,9 +349,14 @@
     </div>
     <div class="web-container hero-grid">
         <div class="hero-text">
-            <h1>Madrasah Hebat, Siswa Bermartabat</h1>
-            <p>Portal informasi resmi MAN 2 Grobogan — Cerdas dalam berpikir, santun dalam berucap, unggul dalam prestasi.</p>
-            <a href="/asesmen/" class="hero-btn">Lihat Jadwal ASAS <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <span class="hero-kicker" id="hero-kicker" hidden><i class="far fa-newspaper" aria-hidden="true"></i> <span id="hero-kicker-text">Berita Terbaru</span></span>
+            <h1 id="hero-title">Madrasah Hebat, Siswa Bermartabat</h1>
+            <p id="hero-excerpt">Portal informasi resmi MAN 2 Grobogan — Cerdas dalam berpikir, santun dalam berucap, unggul dalam prestasi.</p>
+            <p class="hero-meta" id="hero-meta" hidden><i class="far fa-clock" aria-hidden="true"></i> <span id="hero-date"></span></p>
+            <div class="hero-actions">
+                <a href="/asesmen/" class="hero-btn" id="hero-btn">Lihat Jadwal ASAS <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                <a href="#" class="hero-link" id="hero-link" hidden>Baca Selengkapnya <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            </div>
         </div>
     </div>
 </section>
@@ -1149,6 +1163,71 @@
         bg.style.objectPosition = H.posisi || 'center';
         bg.onerror = function () { bg.remove(); };
         bg.src = H.gambar;
+    })();
+
+    /* =====================================================================
+       HEADLINE HERO = BERITA TERBARU
+       Mengambil 1 berita paling baru dari feed Blogger; jika kosong/gagal,
+       headline tetap pada teks statis bawaan (tidak ada elemen kosong).
+       ===================================================================== */
+    (function () {
+        var titleEl = $('hero-title'), excerptEl = $('hero-excerpt'),
+            link = $('hero-link'), dateEl = $('hero-date'), metaEl = $('hero-meta'),
+            kicker = $('hero-kicker');
+        if (!titleEl) return;
+
+        var STATIC_TITLE = titleEl.textContent.trim();
+        var STATIC_EXCERPT = excerptEl ? excerptEl.textContent.trim() : '';
+
+        function restoreStatic() {
+            titleEl.textContent = STATIC_TITLE;
+            if (excerptEl) excerptEl.textContent = STATIC_EXCERPT;
+            if (metaEl) metaEl.hidden = true;
+            if (link) link.hidden = true;
+            if (kicker) kicker.hidden = true;
+        }
+
+        function apply(item) {
+            if (!item || !item.title) { restoreStatic(); return; }
+            titleEl.textContent = item.title;
+            if (excerptEl) excerptEl.textContent = item.excerpt || STATIC_EXCERPT;
+            if (metaEl && item.published) {
+                dateEl.textContent = fmtDate(item.published);
+                metaEl.hidden = false;
+            }
+            if (kicker) kicker.hidden = false;
+            if (link) {
+                var href = item.url || (item.id ? 'a/berita/' + item.id + '/' : '');
+                if (href) { link.setAttribute('href', href); link.hidden = false; }
+                else link.hidden = true;
+            }
+        }
+
+        // Bentuk data/berita.json (sudah dinormalisasi server) -> bentuk yang dipakai di sini.
+        function fromSaved(o) {
+            if (!o || !o.title) return null;
+            return { id: o.id || '', title: o.title, published: o.published || '', excerpt: o.excerpt || '', thumb: o.thumb || '', url: '' };
+        }
+        // Bentuk entri feed Blogger -> bentuk yang dipakai di sini.
+        function fromFeed(o) {
+            if (!o || !o.title) return null;
+            return { id: o.id || '', title: o.title, published: o.published || '', excerpt: o.excerpt || '', thumb: o.thumb || '', url: o.url || '' };
+        }
+
+        // Sumber 1: salinan JSON hasil GitHub Actions (cepat, tanpa CORS).
+        getJSON('data/berita.json?v=' + Date.now()).then(function (arr) {
+            var top = arr && arr.length ? fromSaved(arr[0]) : null;
+            if (top) { apply(top); return true; }
+            return false;
+        }).then(function (ok) {
+            if (ok) return;
+            // Sumber 2: feed Blogger langsung (JSONP).
+            return loadList('berita', 1, 1).then(function (r) {
+                var top = r && r.items && r.items.length ? fromFeed(r.items[0]) : null;
+                if (top) apply(top);
+                else restoreStatic();
+            });
+        }).catch(restoreStatic);
     })();
 
     /* =====================================================================

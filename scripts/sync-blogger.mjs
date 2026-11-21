@@ -334,21 +334,16 @@ async function main() {
     const slug = m[1];
     // Override judul halaman statis bila perlu agar lebih ringkas/sesuai.
     const titleOverride = {
-      'visi-misi-dan-tujuan': 'Visi dan Misi',
-      'sambutan-kepala-madrasah': 'Sambutan Kepala Madrasah'
-    };
-    const descOverride = {
-      'sambutan-kepala-madrasah': 'Sambutan Kepala Madrasah MAN 2 Grobogan yang memuat sapaan pengantar visi misi komitmen orang tua serta doa penutup.'
+      'visi-misi-dan-tujuan': 'Visi dan Misi'
     };
     const title = titleOverride[slug] || p.title;
-    const description = descOverride[slug] || p.description;
     // Isi lokal (content/<slug>.html) mengalahkan Blogger bila ada.
     const body = await localContent(slug) || p.html;
     map[slug] = { title, published: p.published, url: p.url, html: body };
     const pageUrl = `${SITE_URL}p/${slug}/`;
     await writePage(`p/${slug}`, articlePage({
       title,
-      description,
+      description: p.description,
       image: p.thumb,
       pageUrl,
       date: p.published,

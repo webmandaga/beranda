@@ -78,6 +78,8 @@ function norm(e) {
     published: e.published ? e.published.$t : '',
     url: link ? link.href : '',
     html,
+    // Label Blogger (term = nama label). Dipakai untuk memilih headline.
+    labels: (e.category || []).map((c) => c.term || ''),
     thumb: thumbOf(e, html).replace(
       // Blog lama memakai logo dari i.ibb.co.com; ganti dengan aset lokal.
       'https://i.ibb.co.com/KcywhB2N/logo.png',
@@ -298,6 +300,24 @@ async function main() {
     const posts = await fetchAll(host, POST_LIMIT);
     const index = posts.map(({ id, title, published, thumb, excerpt }) => ({ id, title, published, thumb, excerpt }));
     await writeFile(`data/${key}.json`, JSON.stringify(index));
+    // Headline: artikel berlabel "Headline" yang paling baru (case-insensitive).
+    if (key === 'berita') {
+      const byDate = posts.slice().sort((a, b) => new Date(b.published) - new Date(a.published));
+      const pick = byDate.find((p) => (p.labels || []).some((l) => l.toLowerCase() === 'headline'));
+      if (pick) {
+        await writeFile(
+          'data/headline.json',
+          JSON.stringify({
+            id: pick.id,
+            title: pick.title,
+            published: pick.published,
+            thumb: pick.thumb,
+            excerpt: pick.excerpt,
+            url: pick.url || (pick.id ? `${SITE_URL}a/berita/${pick.id}/` : '')
+          })
+        );
+      }
+    }
     await mkdir(`data/${key}`, { recursive: true });
     for (const p of posts) {
       if (!p.id) continue;

@@ -601,7 +601,14 @@
         var pid = ((e.id && e.id.$t) || '').match(/post-(\d+)/);
         var url = '';
         (e.link || []).forEach(function (l) { if (l.rel === 'alternate') url = l.href; });
-        var o = { id: pid ? pid[1] : '', title: e.title.$t, published: e.published ? e.published.$t : '', url: url, html: html };
+        var o = {
+            id: pid ? pid[1] : '',
+            title: e.title.$t,
+            published: e.published ? e.published.$t : '',
+            url: url,
+            html: html,
+            labels: (e.category || []).map(function (c) { return c.term || ''; })
+        };
         if (!light) {
             var text = (new DOMParser().parseFromString(html, 'text/html').body.textContent || '').replace(/\s+/g, ' ').trim();
             o.excerpt = text.length > 140 ? text.slice(0, 140).trim() + '…' : text;
@@ -1214,17 +1221,22 @@
             return { id: o.id || '', title: o.title, published: o.published || '', excerpt: o.excerpt || '', thumb: o.thumb || '', url: o.url || '' };
         }
 
-        // Sumber 1: salinan JSON hasil GitHub Actions (cepat, tanpa CORS).
-        getJSON('data/berita.json?v=' + Date.now()).then(function (arr) {
-            var top = arr && arr.length ? fromSaved(arr[0]) : null;
-            if (top) { apply(top); return true; }
+        // Ambil artikel berlabel "Headline". Jika tidak ada, teks statis dipakai.
+        var HEADLINE_LABEL = 'headline';
+
+        // Sumber 1: data/headline.json (dibuat GitHub Actions dari label).
+        getJSON('data/headline.json?v=' + Date.now()).then(function (o) {
+            if (o && o.title) { apply(o); return true; }
             return false;
         }).then(function (ok) {
             if (ok) return;
-            // Sumber 2: feed Blogger langsung (JSONP).
-            return loadList('berita', 1, 1).then(function (r) {
-                var top = r && r.items && r.items.length ? fromFeed(r.items[0]) : null;
-                if (top) apply(top);
+            // Sumber 2: feed berita langsung -> cari entri berlabel Headline.
+            return loadList('berita', 1, 20).then(function (r) {
+                var hit = null;
+                (r.items || []).forEach(function (it) {
+                    if (!hit && (it.labels || []).some(function (l) { return l.toLowerCase() === HEADLINE_LABEL; })) hit = it;
+                });
+                if (hit) apply(hit);
                 else restoreStatic();
             });
         }).catch(restoreStatic);

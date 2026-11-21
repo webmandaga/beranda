@@ -127,78 +127,82 @@
   },
   "hari": [
     {
-      "tanggal": "2026-11-23",
       "hari": "Senin",
       "tanggalSingkat": "23 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Matematika",
             "11": "Matematika",
-            "12": "Matematika"
+            "11b": "Matematika",
+            "11c": "Matematika",
+            "12": "Matematika",
+            "12b": "Matematika",
+            "12c": "Matematika"
           }
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "Alquran Hadits",
             "11": "Alquran Hadits",
-            "12": "Alquran Hadits"
+            "11b": "Alquran Hadits",
+            "11c": "Alquran Hadits",
+            "12": "Alquran Hadits",
+            "12b": "Alquran Hadits",
+            "12c": "Alquran Hadits"
           }
         },
         {
           "jam": "III",
-          "mulai": "12.15",
-          "selesai": "13.45",
           "waktu": "12.15–13.45",
           "mata": {
             "10": "Bahasa Jawa",
             "11": "Bahasa Jawa",
-            "12": "Bahasa Jawa"
+            "11b": "Bahasa Jawa",
+            "11c": "Bahasa Jawa",
+            "12": "Bahasa Jawa",
+            "12b": "Bahasa Jawa",
+            "12c": "Bahasa Jawa"
           }
         }
       ]
     },
     {
-      "tanggal": "2026-11-24",
       "hari": "Selasa",
       "tanggalSingkat": "24 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Fisika",
             "11": "Fisika",
             "11b": "Ekonomi",
+            "11c": "Ekonomi",
             "12": "Fisika",
-            "12b": "Ekonomi"
+            "12b": "Ekonomi",
+            "12c": "Ekonomi"
           }
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "Fikih",
             "11": "Fikih",
-            "12": "Fikih"
+            "11b": "Fikih",
+            "11c": "Fikih",
+            "12": "Fikih",
+            "12b": "Fikih",
+            "12c": "Fikih"
           }
         },
         {
           "jam": "III",
-          "mulai": "12.15",
-          "selesai": "13.45",
           "waktu": "12.15–13.45",
           "mata": {
             "10": "Informatika"
@@ -207,43 +211,43 @@
       ]
     },
     {
-      "tanggal": "2026-11-25",
       "hari": "Rabu",
       "tanggalSingkat": "25 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "08.15",
-          "selesai": "10.15",
           "waktu": "08.15–10.15",
           "mata": {
             "10": "Bahasa Arab",
             "11": "Bahasa Arab",
-            "12": "Bahasa Arab"
+            "11b": "Bahasa Arab",
+            "11c": "Bahasa Arab",
+            "12": "Bahasa Arab",
+            "12b": "Bahasa Arab",
+            "12c": "Bahasa Arab"
           }
         },
         {
           "jam": "II",
-          "mulai": "10.30",
-          "selesai": "12.00",
           "waktu": "10.30–12.00",
           "mata": {
             "10": "Pancasila",
             "11": "Pancasila",
-            "12": "Pancasila"
+            "11b": "Pancasila",
+            "11c": "Pancasila",
+            "12": "Pancasila",
+            "12b": "Pancasila",
+            "12c": "Pancasila"
           }
         }
       ]
     },
     {
-      "tanggal": "2026-11-26",
       "hari": "Kamis",
       "tanggalSingkat": "26 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Kimia",
@@ -257,19 +261,19 @@
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "SKI",
             "11": "SKI",
-            "12": "SKI"
+            "11b": "SKI",
+            "11c": "SKI",
+            "12": "SKI",
+            "12b": "SKI",
+            "12c": "SKI"
           }
         },
         {
           "jam": "III",
-          "mulai": "12.15",
-          "selesai": "13.45",
           "waktu": "12.15–13.45",
           "mata": {
             "10": "Sosiologi"
@@ -278,14 +282,11 @@
       ]
     },
     {
-      "tanggal": "2026-11-27",
-      "hari": "Jumat",
+      "hari": "Jum'at",
       "tanggalSingkat": "27 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Biologi",
@@ -299,41 +300,44 @@
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "Akidah Akhlak",
             "11": "Akidah Akhlak",
-            "12": "Akidah Akhlak"
+            "11b": "Akidah Akhlak",
+            "11c": "Akidah Akhlak",
+            "12": "Akidah Akhlak",
+            "12b": "Akidah Akhlak",
+            "12c": "Akidah Akhlak"
           }
         }
       ]
     },
     {
-      "tanggal": "2026-11-28",
       "hari": "Sabtu",
       "tanggalSingkat": "28 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Bahasa Indonesia",
             "11": "Bahasa Indonesia",
-            "12": "Bahasa Indonesia"
+            "11b": "Bahasa Indonesia",
+            "11c": "Bahasa Indonesia",
+            "12": "Bahasa Indonesia",
+            "12b": "Bahasa Indonesia",
+            "12c": "Bahasa Indonesia"
           }
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "Ekonomi",
             "11": "Bahasa Inggris TL",
+            "11b": "Bahasa Inggris TL",
+            "11c": "Bahasa Inggris TL",
             "12": "Informatika",
             "12b": "Antropologi",
             "12c": "Ushul Fikih"
@@ -342,14 +346,11 @@
       ]
     },
     {
-      "tanggal": "2026-11-30",
       "hari": "Senin",
       "tanggalSingkat": "30 Nov 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Geografi",
@@ -363,42 +364,47 @@
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "Bahasa Inggris",
             "11": "Bahasa Inggris",
-            "12": "Bahasa Inggris"
+            "11b": "Bahasa Inggris",
+            "11c": "Bahasa Inggris",
+            "12": "Bahasa Inggris",
+            "12b": "Bahasa Inggris",
+            "12c": "Bahasa Inggris"
           }
         }
       ]
     },
     {
-      "tanggal": "2026-12-01",
       "hari": "Selasa",
       "tanggalSingkat": "01 Des 2026",
       "sesi": [
         {
           "jam": "I",
-          "mulai": "07.30",
-          "selesai": "09.30",
           "waktu": "07.30–09.30",
           "mata": {
             "10": "Sejarah",
             "11": "Sejarah",
-            "12": "Sejarah"
+            "11b": "Sejarah",
+            "11c": "Sejarah",
+            "12": "Sejarah",
+            "12b": "Sejarah",
+            "12c": "Sejarah"
           }
         },
         {
           "jam": "II",
-          "mulai": "10.00",
-          "selesai": "11.30",
           "waktu": "10.00–11.30",
           "mata": {
             "10": "PJOK",
             "11": "PJOK",
-            "12": "PJOK"
+            "11b": "PJOK",
+            "11c": "PJOK",
+            "12": "PJOK",
+            "12b": "PJOK",
+            "12c": "PJOK"
           }
         }
       ]

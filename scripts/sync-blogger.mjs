@@ -313,7 +313,7 @@ async function main() {
             published: pick.published,
             thumb: pick.thumb,
             excerpt: pick.excerpt,
-            url: pick.url || (pick.id ? `${SITE_URL}a/berita/${pick.id}/` : '')
+            url: pick.id ? `${SITE_URL}a/berita/${pick.id}/` : pick.url
           })
         );
       }

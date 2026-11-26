@@ -47,6 +47,22 @@ const BLOGS = {
 const INFO_HOST = 'infomandaga.blogspot.com';
 const POST_LIMIT = 300;
 
+/* Tag bersama: font + design system. Halaman dalam WAJIB memuat Poppins;
+   tanpa ini browser jatuh ke sans-serif default dan tampilan berbeda dari beranda. */
+const FONT_LINKS = `<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">`;
+/* Design system dimuat dengan path RELATIF terhadap kedalaman halaman.
+   Alasannya:
+   - halaman dalam berada di /p/<slug>/ (2 level) dan /a/<kunci>/<id>/ (3 level);
+   - URL absolut menggagalkan pratinjau lokal & domain uji,
+   - path relatif tetap benar walau domain berubah.
+   Fungsi ini menghasilkan "../../assets/theme.css" dsb. sesuai kedalaman. */
+function themeHref(relPath) {
+  const depth = String(relPath || '').split('/').filter(Boolean).length;
+  return depth ? '../'.repeat(depth) + 'assets/theme.css' : 'assets/theme.css';
+}
+
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 function textOf(html) {
@@ -120,28 +136,47 @@ function cleanBody(html) {
 
 const CSP = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://drive.google.com https://docs.google.com https://www.google.com https://player.vimeo.com https://www.blogger.com; object-src 'none'; base-uri 'self'; form-action 'none'";
 
-function jsonLd({ title, description, image, pageUrl, date }) {
-  return JSON.stringify({
+/* Skema JSON-LD.
+   Halaman profil (p/…) BUKAN artikel berita — memakai NewsArticle di sana
+   memberi sinyal yang salah ke mesin pencari. Samakan dengan tipe yang sebenarnya. */
+function jsonLd({ title, description, image, pageUrl, date, type = 'NewsArticle', breadcrumb }) {
+  const base = {
     '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
+    '@type': type,
     headline: title,
+    name: title,
     description: description || SITE_NAME,
     image: [image],
-    datePublished: date,
-    dateModified: date,
     mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
     publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: SITE_URL }
-  }).replace(/</g, '\\u003c');
+  };
+  if (type === 'NewsArticle' || type === 'BlogPosting') {
+    base.datePublished = date;
+    base.dateModified = date;
+    base.author = { '@type': 'Organization', name: SITE_NAME, url: SITE_URL };
+  }
+  if (breadcrumb && breadcrumb.length) {
+    base.breadcrumb = {
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumb.map((b, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: b.name,
+        item: b.url
+      }))
+    };
+  }
+  return JSON.stringify(base).replace(/</g, '\\u003c');
 }
 
-function articlePage({ title, description, image, pageUrl, date, body }) {
+function articlePage({ title, description, image, pageUrl, date, body, type = 'NewsArticle', breadcrumb, showDate = true, assetPath }) {
   const t = esc(title);
   const d = esc(description || SITE_NAME);
   const dt = fmtDate(date);
   const img = esc(image);
   const url = esc(pageUrl);
-  const ld = jsonLd({ title, description, image, pageUrl, date });
+  const ld = jsonLd({ title, description, image, pageUrl, date, type, breadcrumb });
   return `<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -161,44 +196,32 @@ function articlePage({ title, description, image, pageUrl, date, body }) {
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">${ld}</script>
 <link rel="icon" href="${DEFAULT_IMAGE}" type="image/webp">
+${FONT_LINKS}
+<link rel="stylesheet" href="${assetPath || themeHref('')}">
 <style>
-  :root { --primary:#673DE6; --accent:#08796E; --accent-light:#14C9B6; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Poppins',sans-serif; color:#fff; min-height:100vh; background:linear-gradient(135deg,#24125a 0%,#4c29bc 40%,#673DE6 70%,#3a1999 100%); }
-  .wrap { max-width:820px; margin:0 auto; padding:100px 20px 60px; }
-  .back { display:inline-flex; align-items:center; gap:8px; color:var(--accent-light); text-decoration:none; font-size:.9rem; font-weight:500; margin-bottom:18px; }
-  .back:hover { text-decoration:underline; }
-  .box { padding:40px 44px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:28px; backdrop-filter:blur(16px); }
-  .date { font-size:.8rem; color:var(--accent-light); font-weight:500; margin:0 0 8px; letter-spacing:.3px; }
-  h1 { font-size:clamp(1.35rem,2.4vw,1.85rem); line-height:1.35; font-weight:700; margin-bottom:18px; text-align:left; }
-  .body { font-size:1rem; line-height:1.85; color:#fff; overflow-wrap:break-word; }
-  .body img { max-width:100%; height:auto; border-radius:16px; margin:14px auto; display:block; }
-  .body iframe { max-width:100%; border:none; border-radius:16px; }
-  .body a { color:var(--accent-light); text-decoration:underline; }
-  .body table { width:100%; border-collapse:collapse; font-size:.92rem; margin:16px 0; display:block; overflow-x:auto; }
-  .body table td,.body table th { border:1px solid rgba(255,255,255,0.25); padding:10px 12px; }
-  .body table th { background:rgba(255,255,255,0.12); font-weight:600; }
-  .foot { text-align:center; margin-top:40px; opacity:.8; font-size:.88rem; }
-  .foot a { color:var(--accent-light); }
-  @media (max-width:600px){ .box { padding:22px 18px; } h1 { font-size:1.25rem; } }
+  /* Penyesuaian khusus halaman artikel (selebihnya ada di assets/theme.css) */
+  @media (max-width:600px){ .page-card { padding:22px 18px; } .page-title { font-size:1.25rem; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <a href="${SITE_URL}" class="back">&larr; Kembali ke beranda</a>
-  <article class="box">
-    ${dt ? `<span class="date">${esc(dt)}</span>` : ''}
-    <h1>${t}</h1>
-    <div class="body">${cleanBody(body || '')}</div>
-  </article>
-  <p class="foot">&copy; ${new Date().getFullYear()} MAN 2 Grobogan. <a href="${SITE_URL}">Kunjungi situs utama</a></p>
+<a class="skip-link" href="#main">Lewati ke konten utama</a>
+<div class="page-shell">
+  <main class="page-main" id="main">
+    <a href="${SITE_URL}" class="page-back">&larr; Kembali ke beranda</a>
+    <article class="page-card">
+      ${showDate && dt ? `<span class="page-date">${esc(dt)}</span>` : ''}
+      <h1 class="page-title">${t}</h1>
+      <div class="prose">${cleanBody(body || '')}</div>
+    </article>
+    <p class="page-foot">&copy; ${new Date().getFullYear()} MAN 2 Grobogan. <a href="${SITE_URL}">Kunjungi situs utama</a></p>
+  </main>
 </div>
 </body>
 </html>
 `;
 }
 
-function listPage({ title, description, image, pageUrl, items }) {
+function listPage({ title, description, image, pageUrl, items, assetPath }) {
   const t = esc(title);
   const d = esc(description || SITE_NAME);
   const rows = items.map((it) => {
@@ -206,6 +229,7 @@ function listPage({ title, description, image, pageUrl, items }) {
     const dt = fmtDate(it.date);
     return `    <li class="item"><a href="${u}"><span class="date">${esc(dt)}</span><span class="t">${esc(it.title)}</span></a></li>`;
   }).join('\n');
+  const ld = jsonLd({ title, description, image, pageUrl, type: 'CollectionPage', date: '' });
   return `<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -223,37 +247,27 @@ function listPage({ title, description, image, pageUrl, items }) {
 <meta property="og:image" content="${esc(image)}">
 <meta property="og:url" content="${esc(pageUrl)}">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">${ld}</script>
 <link rel="icon" href="${DEFAULT_IMAGE}" type="image/webp">
+${FONT_LINKS}
+<link rel="stylesheet" href="${assetPath || themeHref('')}">
 <style>
-  :root { --primary:#673DE6; --accent:#08796E; --accent-light:#14C9B6; }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Poppins',sans-serif; color:#fff; min-height:100vh; background:linear-gradient(135deg,#24125a 0%,#4c29bc 40%,#673DE6 70%,#3a1999 100%); }
-  .wrap { max-width:820px; margin:0 auto; padding:100px 20px 60px; }
-  .back { display:inline-flex; align-items:center; gap:8px; color:var(--accent-light); text-decoration:none; font-size:.9rem; font-weight:500; margin-bottom:18px; }
-  .back:hover { text-decoration:underline; }
-  .box { padding:36px 40px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:28px; backdrop-filter:blur(16px); }
-  h1 { font-size:clamp(1.35rem,2.4vw,1.9rem); line-height:1.35; font-weight:700; margin-bottom:22px; }
-  ul { list-style:none; }
-  .item { border-top:1px solid rgba(255,255,255,0.14); }
-  .item a { display:block; padding:16px 2px; color:#fff; text-decoration:none; }
-  .item a:hover .t { color:var(--accent-light); }
-  .item .date { display:block; font-size:.78rem; color:var(--accent-light); font-weight:500; margin-bottom:5px; }
-  .item .t { font-size:1rem; line-height:1.5; font-weight:500; }
-  .foot { text-align:center; margin-top:40px; opacity:.8; font-size:.88rem; }
-  .foot a { color:var(--accent-light); }
-  @media (max-width:600px){ .box { padding:24px 18px; } }
+  @media (max-width:600px){ .page-card { padding:24px 18px; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <a href="${SITE_URL}" class="back">&larr; Kembali ke beranda</a>
-  <div class="box">
-    <h1>${t}</h1>
-    <ul>
+<a class="skip-link" href="#main">Lewati ke konten utama</a>
+<div class="page-shell">
+  <main class="page-main" id="main">
+    <a href="${SITE_URL}" class="page-back">&larr; Kembali ke beranda</a>
+    <div class="page-card">
+      <h1 class="page-title">${t}</h1>
+      <ul class="page-list">
 ${rows}
-    </ul>
-  </div>
-  <p class="foot">&copy; ${new Date().getFullYear()} MAN 2 Grobogan. <a href="${SITE_URL}">Kunjungi situs utama</a></p>
+      </ul>
+    </div>
+    <p class="page-foot">&copy; ${new Date().getFullYear()} MAN 2 Grobogan. <a href="${SITE_URL}">Kunjungi situs utama</a></p>
+  </main>
 </div>
 </body>
 </html>
@@ -274,6 +288,40 @@ async function localContent(slug) {
   } catch {
     return null;
   }
+}
+
+/* ---------- Meta deskripsi per halaman profil ---------- */
+const PAGE_DESC = {
+  'sejarah-madrasah': 'Sejarah berdirinya MAN 2 Grobogan, Madrasah Aliyah Negeri di Gubug, Grobogan: perjalanan, tokoh, dan perkembangannya hingga kini.',
+  'visi-misi-dan-tujuan': 'Visi dan misi MAN 2 Grobogan: arah pendidikan dan operasional berbasis nilai keislaman untuk membentuk insan yang unggul, mandiri, dan profetis.',
+  'sambutan-kepala-madrasah': 'Sambutan Kepala Madrasah MAN 2 Grobogan: visi, arah pendidikan, dan harapan bagi peserta didik serta warga madrasah.',
+  'struktur-organisasi': 'Struktur organisasi dan kepemimpinan MAN 2 Grobogan lengkap: kepala madrasah, komite sekolah, serta pembagian tugas.',
+  'guru-dan-tenaga-kependidikan': 'Daftar guru dan tenaga kependidikan MAN 2 Grobogan: lengkap dengan jabatan, mata pelajaran yang diampu, dan kontak resmi madrasah.',
+  'sarana-dan-prasarana': 'Sarana dan prasarana MAN 2 Grobogan: ruang kelas, laboratorium, masjid sekolah, perpustakaan, dan fasilitas pendukung kegiatan belajar.',
+  'identitas-madrasah': 'Identitas resmi MAN 2 Grobogan: NPSN, kode POSIX, alamat, telepon, email, jam operasional, dan data resmi madrasah.',
+  'kurikulum': 'Kurikulum MAN 2 Grobogan: struktur rompel, mata pelajaran, pembelajaran mikro, serta pendekatan yang dipakai di kelas.',
+  'kalender-akademik': 'Kalender akademik MAN 2 Grobogan tahun pelajaran berjalan: semester, hari efektif, libur, dan agenda penting.',
+  'program-pembelajaran': 'Program pembelajaran MAN 2 Grobogan: pembelajaran terdiferensiasi, penguatan karakter, dan pembelajaran berbasis proyek.',
+  'dokumen-akademik': 'Dokumen akademik MAN 2 Grobogan: daftar dokumen kurikulum, perangkat pembelajaran, administrasi sekolah, dan panduan layanan.',
+  'asesmen-dan-evaluasi': 'Asesmen dan evaluasi di MAN 2 Grobogan: format asesmen sumatif, ASAS berbasis gawai, serta pedoman penilaian.',
+  'unduhan-akademik': 'Unduhan dokumen akademik MAN 2 Grobogan: berkas RPP, soal, jadwal, dan formulir yang dapat diunduh langsung.',
+  'osim': 'OSIM MAN 2 Grobogan: struktur organisasi siswa, program kegiatan, agenda, dan cara bergabung ke kepengurusan.',
+  'ekstrakurikuler': 'Ekstrakurikuler MAN 2 Grobogan: pilihan kegiatan minat dan bakat siswa, mulai pramuka, bulu tangkis, hingga olahraga dan seni.',
+  'tata-tertib-siswa': 'Tata tertib siswa MAN 2 Grobogan: aturan kedisiplinan, seragam, kehadiran, dan konsekuensi bagi peserta didik.',
+  'bkkonseling': 'Bimbingan dan konseling MAN 2 Grobogan: layanan BK, layanan homeroom, layanan konseling pribadi, dan rujukan kasus.',
+  'prestasi-siswa': 'Prestasi siswa MAN 2 Grobogan: penghargaan akademik dan nonakademik, juara tingkat kabupaten, provinsi, hingga nasional.',
+  'alumni': 'Alumni MAN 2 Grobogan: jejak angkatan, testimoni, dan program jejaring untuk menjaga kelanjutan alumni.',
+  'pengumuman': 'Pengumuman resmi MAN 2 Grobogan: informasi penting bagi peserta didik, orang tua, dan warga madrasah beserta jadwalnya.',
+  'agenda': 'Agenda kegiatan MAN 2 Grobogan: jadwal acara, seminar, kegiatan madrasah, dan acara warga sekolah.',
+  'prestasi': 'Prestasi MAN 2 Grobogan: rangkuman penghargaan madrasah dalam berbagai bidang, akademik dan nonakademik.',
+  'arsip': 'Arsip publikasi MAN 2 Grobogan: kumpulan dokumen, laporan, dan publikasi madrasah yang dapat diunduh.'
+};
+/* Ringkasan isi + nama situs, untuk halaman tanpa deskripsi manual. */
+function buildPageDesc(title, body) {
+  const text = textOf(String(body || '').replace(/<[^>]+>/g, ' '));
+  const core = text.length > 150 ? text.slice(0, 150).trim() + '…' : text.trim();
+  const base = `${title} — MAN 2 Grobogan.`;
+  return core ? `${core} ${base}` : base;
 }
 
 const sitemapUrls = [];
@@ -329,7 +377,8 @@ async function main() {
         image: p.thumb,
         pageUrl,
         date: p.published,
-        body: p.html
+        body: p.html,
+        assetPath: themeHref(`a/${key}/${p.id}`)
       }));
       addSitemap(pageUrl);
     }
@@ -340,7 +389,8 @@ async function main() {
       description: meta.desc,
       image: DEFAULT_IMAGE,
       pageUrl: listUrl,
-      items: posts.map((p) => ({ title: p.title, date: p.published, url: `${SITE_URL}a/${key}/${p.id}/` }))
+      items: posts.map((p) => ({ title: p.title, date: p.published, url: `${SITE_URL}a/${key}/${p.id}/` })),
+      assetPath: themeHref(`a/${key}`)
     }));
     addSitemap(listUrl);
     console.log(`${key}: ${posts.length} postingan`);
@@ -361,13 +411,25 @@ async function main() {
     const body = await localContent(slug) || p.html;
     map[slug] = { title, published: p.published, url: p.url, html: body };
     const pageUrl = `${SITE_URL}p/${slug}/`;
+    // Halaman profil BUKAN berita: meta description generik ("MAN 2 Grobogan")
+    // untuk 24 halaman sekaligus merusak cuplikan di hasil pencarian.
+    // Pakai deskripsi khusus per halaman; fallback = ringkasan isi + nama situs.
+    const metaDesc = PAGE_DESC[slug] || buildPageDesc(title, body);
     await writePage(`p/${slug}`, articlePage({
       title,
-      description: p.description,
+      description: metaDesc,
       image: p.thumb,
       pageUrl,
       date: p.published,
-      body
+      body,
+      type: 'WebPage',
+      showDate: false,
+      assetPath: themeHref(`p/${slug}`),
+      breadcrumb: [
+        { name: 'Beranda', url: SITE_URL },
+        { name: 'Profil Madrasah', url: `${SITE_URL}p/identitas-madrasah/` },
+        { name: title, url: pageUrl }
+      ]
     }));
     addSitemap(pageUrl);
   }

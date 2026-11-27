@@ -58,6 +58,16 @@ const FONT_LINKS = `<link rel="preconnect" href="https://fonts.googleapis.com">
    - URL absolut menggagalkan pratinjau lokal & domain uji,
    - path relatif tetap benar walau domain berubah.
    Fungsi ini menghasilkan "../../assets/theme.css" dsb. sesuai kedalaman. */
+/* Tulis ulang src gambar lokal (assets/...) agar valid di kedalaman halaman.
+   Di beranda & rute hash -> 'assets/...'; di p/<slug>/ (2 level) -> '../../assets/...'. */
+function fixAssetSrc(html, depth) {
+  const pre = depth ? '../'.repeat(depth) : '';
+  return String(html || '').replace(
+    /\b(src|href)="assets\//g,
+    (_, attr) => `${attr}="${pre}assets/`
+  );
+}
+
 function themeHref(relPath) {
   const depth = String(relPath || '').split('/').filter(Boolean).length;
   return depth ? '../'.repeat(depth) + 'assets/theme.css' : 'assets/theme.css';
@@ -170,7 +180,7 @@ function jsonLd({ title, description, image, pageUrl, date, type = 'NewsArticle'
   return JSON.stringify(base).replace(/</g, '\\u003c');
 }
 
-function articlePage({ title, description, image, pageUrl, date, body, type = 'NewsArticle', breadcrumb, showDate = true, assetPath }) {
+function articlePage({ title, description, image, pageUrl, date, body, type = 'NewsArticle', breadcrumb, showDate = true, assetPath, depth = 0 }) {
   const t = esc(title);
   const d = esc(description || SITE_NAME);
   const dt = fmtDate(date);
@@ -214,7 +224,7 @@ ${FONT_LINKS}
     <article class="page-card">
       ${showDate && dt ? `<span class="page-date">${esc(dt)}</span>` : ''}
       <h1 class="page-title">${t}</h1>
-      <div class="prose">${cleanBody(body || '')}</div>
+      <div class="prose">${fixAssetSrc(cleanBody(body || ''), depth)}</div>
     </article>
     <p class="page-foot">&copy; ${new Date().getFullYear()} MAN 2 Grobogan. <a href="${SITE_URL}">Kunjungi situs utama</a></p>
   </main>
@@ -383,7 +393,8 @@ async function main() {
         pageUrl,
         date: p.published,
         body: p.html,
-        assetPath: themeHref(`a/${key}/${p.id}`)
+        assetPath: themeHref(`a/${key}/${p.id}`),
+        depth: 2
       }));
       addSitemap(pageUrl);
     }
@@ -467,6 +478,7 @@ async function main() {
       type: 'WebPage',
       showDate: false,
       assetPath: themeHref(`p/${slug}`),
+      depth: 2,
       breadcrumb: [
         { name: 'Beranda', url: SITE_URL },
         { name: parentLabel(slug), url: parentUrl(slug) },

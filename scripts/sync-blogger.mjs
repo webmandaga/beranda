@@ -208,6 +208,9 @@ ${FONT_LINKS}
 <div class="page-shell">
   <main class="page-main" id="main">
     <a href="${SITE_URL}" class="page-back">&larr; Kembali ke beranda</a>
+    ${breadcrumb && breadcrumb.length ? `<nav class="breadcrumb" aria-label="Remah roti"><ol>${breadcrumb.map((b, i) => (i === breadcrumb.length - 1
+      ? `<li aria-current="page">${esc(b.name)}</li>`
+      : `<li><a href="${esc(b.url)}">${esc(b.name)}</a></li>`)).join('')}</ol></nav>` : ''}
     <article class="page-card">
       ${showDate && dt ? `<span class="page-date">${esc(dt)}</span>` : ''}
       <h1 class="page-title">${t}</h1>
@@ -311,7 +314,7 @@ const PAGE_DESC = {
   'bkkonseling': 'Bimbingan dan konseling MAN 2 Grobogan: layanan BK, layanan homeroom, layanan konseling pribadi, dan rujukan kasus.',
   'prestasi-siswa': 'Prestasi siswa MAN 2 Grobogan: penghargaan akademik dan nonakademik, juara tingkat kabupaten, provinsi, hingga nasional.',
   'alumni': 'Alumni MAN 2 Grobogan: jejak angkatan, testimoni, dan program jejaring untuk menjaga kelanjutan alumni.',
-  'pengumuman': 'Pengumuman resmi MAN 2 Grobogan: informasi penting bagi peserta didik, orang tua, dan warga madrasah beserta jadwalnya.',
+  'pengumuman': 'Lowongan guru MAN 2 Grobogan 2026: formasi Sosiologi, Seni Budaya, dan Informatika. Pendaftaran 30 November - 12 Desember 2026, seleksi 14 Desember 2026.',
   'agenda': 'Agenda kegiatan MAN 2 Grobogan: jadwal acara, seminar, kegiatan madrasah, dan acara warga sekolah.',
   'prestasi': 'Prestasi MAN 2 Grobogan: rangkuman penghargaan madrasah dalam berbagai bidang, akademik dan nonakademik.',
   'arsip': 'Arsip publikasi MAN 2 Grobogan: kumpulan dokumen, laporan, dan publikasi madrasah yang dapat diunduh.'
@@ -344,26 +347,28 @@ async function main() {
 
   addSitemap(SITE_URL);
 
+  /* Kandidat hero beranda: postingan berlabel "Headline" (case-insensitive).
+     Dikumpulkan dari SEMUA blog, lalu diambil yang paling baru. Lihat Opsi B
+     di catatan: label "Headline" di infomandaga pun bisa jadi hero global. */
+  const heroCandidates = [];
+
   for (const [key, host] of Object.entries(BLOGS)) {
     const posts = await fetchAll(host, POST_LIMIT);
     const index = posts.map(({ id, title, published, thumb, excerpt }) => ({ id, title, published, thumb, excerpt }));
     await writeFile(`data/${key}.json`, JSON.stringify(index));
-    // Headline: artikel berlabel "Headline" yang paling baru (case-insensitive).
-    if (key === 'berita') {
+    // Artikel berlabel "Headline" dari blog berita/mading/foto/video jadi kandidat hero.
+    {
       const byDate = posts.slice().sort((a, b) => new Date(b.published) - new Date(a.published));
       const pick = byDate.find((p) => (p.labels || []).some((l) => l.toLowerCase() === 'headline'));
       if (pick) {
-        await writeFile(
-          'data/headline.json',
-          JSON.stringify({
-            id: pick.id,
-            title: pick.title,
-            published: pick.published,
-            thumb: pick.thumb,
-            excerpt: pick.excerpt,
-            url: pick.id ? `${SITE_URL}a/berita/${pick.id}/` : pick.url
-          })
-        );
+        heroCandidates.push({
+          id: pick.id,
+          title: pick.title,
+          published: pick.published,
+          thumb: pick.thumb,
+          excerpt: pick.excerpt,
+          url: pick.id ? `${SITE_URL}a/${key}/${pick.id}/` : pick.url
+        });
       }
     }
     await mkdir(`data/${key}`, { recursive: true });
@@ -396,6 +401,32 @@ async function main() {
     console.log(`${key}: ${posts.length} postingan`);
   }
 
+  /* Breadcrumb: tentukan induk halaman sesuai lokasi di menu, bukan asumsi
+     semua halaman p/ berada di bawah "Profil Madrasah". */
+  const MENU_PARENT = {
+    profil: ['sejarah-madrasah', 'visi-misi-dan-tujuan', 'sambutan-kepala-madrasah',
+             'struktur-organisasi', 'guru-dan-tenaga-kependidikan', 'sarana-dan-prasarana',
+             'identitas-madrasah'],
+    akademik: ['kurikulum', 'kalender-akademik', 'jadwal-pelajaran', 'jadwal-asesmen-summatif',
+               'program-pembelajaran', 'dokumen-akademik', 'asesmen-dan-evaluasi', 'unduhan-akademik'],
+    kesiswaan: ['osim', 'ekstrakurikuler', 'tata-tertib-siswa', 'bkkonseling', 'prestasi-siswa', 'alumni'],
+    publikasi: ['pengumuman', 'agenda', 'prestasi', 'arsip']
+  };
+  const PARENT_INFO = {
+    profil: { label: 'Profil Madrasah', url: `${SITE_URL}p/identitas-madrasah/` },
+    akademik: { label: 'Akademik', url: `${SITE_URL}p/kurikulum/` },
+    kesiswaan: { label: 'Kesiswaan', url: `${SITE_URL}p/osim/` },
+    publikasi: { label: 'Publikasi', url: `${SITE_URL}p/pengumuman/` }
+  };
+  function parentKey(slug) {
+    for (const [k, list] of Object.entries(MENU_PARENT)) {
+      if (list.includes(slug)) return k;
+    }
+    return 'profil';
+  }
+  function parentLabel(slug) { return PARENT_INFO[parentKey(slug)].label; }
+  function parentUrl(slug) { return PARENT_INFO[parentKey(slug)].url; }
+
   const pages = await fetchAll(INFO_HOST, 500);
   const map = {};
   for (const p of pages) {
@@ -411,6 +442,17 @@ async function main() {
     const body = await localContent(slug) || p.html;
     map[slug] = { title, published: p.published, url: p.url, html: body };
     const pageUrl = `${SITE_URL}p/${slug}/`;
+    // Halaman info berlabel "Headline" (mis. lowongan guru) juga kandidat hero.
+    if ((p.labels || []).some((l) => l.toLowerCase() === 'headline')) {
+      heroCandidates.push({
+        id: slug,
+        title,
+        published: p.published,
+        thumb: p.thumb,
+        excerpt: p.excerpt || textOf(String(body || '').replace(/<[^>]+>/g, ' ')).slice(0, 200),
+        url: pageUrl
+      });
+    }
     // Halaman profil BUKAN berita: meta description generik ("MAN 2 Grobogan")
     // untuk 24 halaman sekaligus merusak cuplikan di hasil pencarian.
     // Pakai deskripsi khusus per halaman; fallback = ringkasan isi + nama situs.
@@ -427,7 +469,7 @@ async function main() {
       assetPath: themeHref(`p/${slug}`),
       breadcrumb: [
         { name: 'Beranda', url: SITE_URL },
-        { name: 'Profil Madrasah', url: `${SITE_URL}p/identitas-madrasah/` },
+        { name: parentLabel(slug), url: parentUrl(slug) },
         { name: title, url: pageUrl }
       ]
     }));
@@ -435,6 +477,15 @@ async function main() {
   }
   await writeFile('data/info.json', JSON.stringify(map));
   console.log(`info: ${Object.keys(map).length} halaman`);
+
+  // Pilih hero terbaru dari seluruh kandidat (berita + infomandaga).
+  if (heroCandidates.length) {
+    const hero = heroCandidates.slice().sort(
+      (a, b) => new Date(b.published) - new Date(a.published)
+    )[0];
+    await writeFile('data/headline.json', JSON.stringify(hero));
+    console.log(`headline: ${hero.title} (${hero.url})`);
+  }
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.map((u) => `  <url><loc>${esc(u)}</loc></url>`).join('\n')}\n</urlset>\n`;
   await writeFile('sitemap.xml', sitemap);
